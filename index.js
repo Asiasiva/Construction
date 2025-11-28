@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as XLSX from 'xlsx';
 
-export default function ConstructionExpenseTracker() {
+function ConstructionExpenseTracker() {
   const [siteName, setSiteName] = useState('');
   const [incomeList, setIncomeList] = useState([]);
   const [expenseList, setExpenseList] = useState([]);
@@ -34,12 +34,9 @@ export default function ConstructionExpenseTracker() {
 
   const exportToExcel = () => {
     const wb = XLSX.utils.book_new();
-    const incomeWS = XLSX.utils.json_to_sheet(incomeList);
-    const expenseWS = XLSX.utils.json_to_sheet(expenseList);
-    XLSX.utils.book_append_sheet(wb, incomeWS, 'Income');
-    XLSX.utils.book_append_sheet(wb, expenseWS, 'Expenses');
-    const fileName = `${siteName || 'Site'}_${new Date().toISOString().split('T')[0]}_Report.xlsx`;
-    XLSX.writeFile(wb, fileName);
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(incomeList), 'Income');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(expenseList), 'Expenses');
+    XLSX.writeFile(wb, `${siteName || 'Site'}_${new Date().toISOString().split('T')[0]}_Report.xlsx`);
   };
 
   return (
@@ -54,7 +51,6 @@ export default function ConstructionExpenseTracker() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Income Section */}
         <div className="bg-white p-6 rounded-2xl shadow-lg">
           <h2 className="text-2xl font-semibold mb-4">Income (வரவு)</h2>
           <div className="space-y-4">
@@ -74,7 +70,6 @@ export default function ConstructionExpenseTracker() {
           </div>
         </div>
 
-        {/* Expense Section */}
         <div className="bg-white p-6 rounded-2xl shadow-lg">
           <h2 className="text-2xl font-semibold mb-4">Expenses (செலவு)</h2>
           <div className="space-y-4">
@@ -112,3 +107,5 @@ export default function ConstructionExpenseTracker() {
     </div>
   );
 }
+
+export default ConstructionExpenseTracker;
