@@ -1,0 +1,791 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Plus, 
+  Minus, 
+  Trash2, 
+  PieChart, 
+  LayoutDashboard, 
+  Save, 
+  FileText, 
+  TrendingUp, 
+  TrendingDown,
+  Wallet,
+  Building2,
+  Edit2,
+  Search,
+  Filter,
+  X,
+  CheckCircle2,
+  ArrowRight
+} from 'lucide-react';
+
+// --- Constants & Categories ---
+
+const INCOME_CATEGORIES = [
+  "Advance Payment Received",
+  "Stage-wise Payment Received",
+  "Material Return Credits",
+  "Other Income (Scrap sale etc.)"
+];
+
+const EXPENSE_CATEGORIES = {
+  "Material Expenses": [
+    "Cement", "Sand / M-Sand", "Bricks / Blocks", "Steel", "Stones / Aggregate",
+    "Paint & Primer", "Tiles / Marble / Granite", "Electrical Items", 
+    "Plumbing Items", "Wood / Doors / Windows", "Glass / False ceiling", "Others"
+  ],
+  "Labour Expenses": [
+    "Mason", "Helpers", "Carpenter", "Electrician", "Plumber", 
+    "Painter", "Fabrication workers", "Site supervisor salary", 
+    "Daily wage records", "Subcontractor payments"
+  ],
+  "Machinery & Equipment": [
+    "JCB, Tractor, Tipper rent", "Concrete mixer rent", "Scaffolding rent",
+    "Vibrator rent", "Drilling machine rent", "Generator Fuel & Maintenance"
+  ],
+  "Transport & Loading": [
+    "Material transport", "Loading / Unloading", "Fuel expenses"
+  ],
+  "Site Expenses": [
+    "Water (Tanker) charges", "EB Bill", "Site security salaries",
+    "Temporary shed / office", "Safety equipment"
+  ],
+  "Professional & Legal": [
+    "Architect fees", "Engineer fees", "Approval fees",
+    "Government charges", "Consultant fees"
+  ],
+  "Miscellaneous": [
+    "Phone / Internet", "Stationery", "Unexpected expenses", "Repairs / Service"
+  ]
+};
+
+const PAYMENT_MODES = ["Cash", "UPI", "Bank Transfer", "Cheque"];
+const PAYMENT_STATUS = ["Paid", "Pending", "Partial"];
+
+// --- UI Components ---
+
+const Card = ({ children, className = "" }) => (
+  <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-5 ${className}`}>
+    {children}
+  </div>
+);
+
+const Badge = ({ children, type }) => {
+  const styles = {
+    income: "bg-emerald-100 text-emerald-800 border-emerald-200",
+    expense: "bg-rose-100 text-rose-800 border-rose-200",
+    neutral: "bg-slate-100 text-slate-700 border-slate-200",
+    pending: "bg-amber-100 text-amber-800 border-amber-200",
+    paid: "bg-emerald-50 text-emerald-700 border-emerald-200"
+  };
+  return (
+    <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${styles[type] || styles.neutral}`}>
+      {children}
+    </span>
+  );
+};
+
+export default function App() {
+  // State
+  const [activeTab, setActiveTab] = useState('dashboard');
+  const [transactions, setTransactions] = useState([]);
+  const [projects, setProjects] = useState(['Main Project']);
+  
+  // Edit Mode State
+  const [editingId, setEditingId] = useState(null);
+  
+  // Form State
+  const [formType, setFormType] = useState('expense');
+  const [formData, setFormData] = useState({
+    date: new Date().toISOString().split('T')[0],
+    projectName: 'Main Project',
+    category: '',
+    subCategory: '',
+    amount: '',
+    vendor: '',
+    billNo: '',
+    paymentMode: 'Cash',
+    paymentStatus: 'Paid',
+    notes: ''
+  });
+
+  // Filters State for Reports
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterProject, setFilterProject] = useState('All');
+
+  // Load data
+  useEffect(() => {
+    const savedData = localStorage.getItem('construction_tracker_data');
+    if (savedData) {
+      setTransactions(JSON.parse(savedData));
+    }
+  }, []);
+
+  // Save data
+  useEffect(() => {
+    localStorage.setItem('construction_tracker_data', JSON.stringify(transactions));
+  }, [transactions]);
+
+  // Calculations
+  const totalIncome = transactions
+    .filter(t => t.type === 'income')
+    .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+
+  const totalExpense = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+
+  const balance = totalIncome - totalExpense;
+
+  // Handlers
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleEdit = (transaction) => {
+    setEditingId(transaction.id);
+    setFormType(transaction.type);
+    setFormData({
+      date: transaction.date,
+      projectName: transaction.projectName,
+      category: transaction.category,
+      subCategory: transaction.subCategory || '',
+      amount: transaction.amount,
+      vendor: transaction.vendor || '',
+      billNo: transaction.billNo || '',
+      paymentMode: transaction.paymentMode,
+      paymentStatus: transaction.paymentStatus,
+      notes: transaction.notes || ''
+    });
+    setActiveTab('entry');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData({
+      date: new Date().toISOString().split('T')[0],
+      projectName: 'Main Project',
+      category: '',
+      subCategory: '',
+      amount: '',
+      vendor: '',
+      billNo: '',
+      paymentMode: 'Cash',
+      paymentStatus: 'Paid',
+      notes: ''
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.amount || !formData.category) return;
+
+    const newTransaction = {
+      id: editingId || Date.now().toString(),
+      type: formType,
+      ...formData,
+      amount: parseFloat(formData.amount)
+    };
+
+    if (editingId) {
+      // Update existing
+      setTransactions(prev => prev.map(t => t.id === editingId ? newTransaction : t));
+      alert("Entry Updated Successfully! / பதிவு மாற்றப்பட்டது!");
+    } else {
+      // Create new
+      setTransactions([newTransaction, ...transactions]);
+      alert("Entry Added Successfully! / பதிவு சேர்க்கப்பட்டது!");
+    }
+
+    // Reset Form
+    setEditingId(null);
+    setFormData(prev => ({
+      ...prev,
+      category: '',
+      subCategory: '',
+      amount: '',
+      vendor: '',
+      billNo: '',
+      notes: ''
+    }));
+
+    if (!projects.includes(formData.projectName)) {
+      setProjects([...projects, formData.projectName]);
+    }
+  };
+
+  const handleDelete = (id) => {
+    if (confirm("Are you sure you want to delete this entry? / இந்த பதிவை நீக்க விரும்புகிறீர்களா?")) {
+      setTransactions(transactions.filter(t => t.id !== id));
+    }
+  };
+
+  // --- Views ---
+
+  const DashboardView = () => (
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="border-l-4 border-l-emerald-500 bg-gradient-to-br from-white to-emerald-50/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider">Total Income</p>
+              <h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalIncome.toLocaleString('en-IN')}</h3>
+            </div>
+            <div className="p-3 bg-emerald-100 rounded-full shadow-sm">
+              <TrendingUp className="w-6 h-6 text-emerald-600" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-l-4 border-l-rose-500 bg-gradient-to-br from-white to-rose-50/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider">Total Expenses</p>
+              <h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalExpense.toLocaleString('en-IN')}</h3>
+            </div>
+            <div className="p-3 bg-rose-100 rounded-full shadow-sm">
+              <TrendingDown className="w-6 h-6 text-rose-600" />
+            </div>
+          </div>
+        </Card>
+
+        <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-white to-blue-50/50">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider">Net Balance</p>
+              <h3 className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-blue-700' : 'text-rose-600'}`}>
+                ₹ {balance.toLocaleString('en-IN')}
+              </h3>
+            </div>
+            <div className="p-3 bg-blue-100 rounded-full shadow-sm">
+              <Wallet className="w-6 h-6 text-blue-600" />
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Recent Transactions List */}
+      <Card className="overflow-hidden">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="font-bold text-lg text-slate-800">Recent Activity</h3>
+          <button onClick={() => setActiveTab('reports')} className="text-sm text-blue-600 font-medium hover:underline flex items-center gap-1">
+            View All <ArrowRight size={14} />
+          </button>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50 text-slate-500 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
+                <th className="p-4">Date</th>
+                <th className="p-4">Details</th>
+                <th className="p-4">Amount</th>
+                <th className="p-4 text-center">Status</th>
+                <th className="p-4 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm divide-y divide-slate-100">
+              {transactions.slice(0, 5).map((t) => (
+                <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="p-4 text-slate-600 whitespace-nowrap">{t.date}</td>
+                  <td className="p-4">
+                    <div className="font-medium text-slate-800">{t.category}</div>
+                    <div className="text-xs text-slate-500">{t.projectName} • {t.vendor}</div>
+                  </td>
+                  <td className={`p-4 font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    {t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}
+                  </td>
+                  <td className="p-4 text-center">
+                     <Badge type={t.paymentStatus === 'Paid' ? 'paid' : 'pending'}>{t.paymentStatus}</Badge>
+                  </td>
+                  <td className="p-4 text-center">
+                    <div className="flex justify-center gap-2">
+                      <button onClick={() => handleEdit(t)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-md transition-colors" title="Edit">
+                        <Edit2 size={16} />
+                      </button>
+                      <button onClick={() => handleDelete(t.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Delete">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {transactions.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="p-8 text-center text-slate-400">
+                    No transactions yet.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+
+  const EntryFormView = () => (
+    <div className="max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+      
+      {editingId && (
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg flex justify-between items-center">
+          <span className="flex items-center gap-2 text-sm font-medium">
+            <Edit2 size={16} /> You are editing an existing entry.
+          </span>
+          <button onClick={cancelEdit} className="text-sm underline hover:text-amber-900">Cancel Edit</button>
+        </div>
+      )}
+
+      <div className="flex bg-slate-100 p-1.5 rounded-xl mb-6 shadow-inner">
+        <button 
+          onClick={() => { setFormType('income'); if(!editingId) setFormData({...formData, category: ''}); }}
+          className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${formType === 'income' ? 'bg-white shadow-sm text-emerald-700 ring-1 ring-black/5' : 'text-slate-500 hover:bg-slate-200'}`}
+        >
+          <Plus size={18} /> Income (வரவு)
+        </button>
+        <button 
+          onClick={() => { setFormType('expense'); if(!editingId) setFormData({...formData, category: ''}); }}
+          className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${formType === 'expense' ? 'bg-white shadow-sm text-rose-700 ring-1 ring-black/5' : 'text-slate-500 hover:bg-slate-200'}`}
+        >
+          <Minus size={18} /> Expense (செலவு)
+        </button>
+      </div>
+
+      <Card>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Project Name *</label>
+              <input 
+                type="text" 
+                name="projectName"
+                value={formData.projectName}
+                onChange={handleInputChange}
+                list="projects-list"
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
+                placeholder="Ex: Villa Project A"
+                required
+              />
+              <datalist id="projects-list">
+                {projects.map(p => <option key={p} value={p} />)}
+              </datalist>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Date *</label>
+              <input 
+                type="date" 
+                name="date"
+                value={formData.date}
+                onChange={handleInputChange}
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Category (வகை) *</label>
+              <select 
+                name="category"
+                value={formData.category}
+                onChange={(e) => {
+                  handleInputChange(e);
+                  if (!editingId) setFormData(prev => ({...prev, subCategory: '', category: e.target.value}));
+                }}
+                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
+                required
+              >
+                <option value="">Select Category</option>
+                {formType === 'income' 
+                  ? INCOME_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)
+                  : Object.keys(EXPENSE_CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)
+                }
+              </select>
+            </div>
+
+            {formType === 'expense' && formData.category && (
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sub-Category (உப வகை)</label>
+                <input 
+                  type="text"
+                  name="subCategory"
+                  value={formData.subCategory}
+                  onChange={handleInputChange}
+                  list="sub-category-list"
+                  className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
+                  placeholder="Select or type new..."
+                />
+                <datalist id="sub-category-list">
+                  {EXPENSE_CATEGORIES[formData.category]?.map(sc => (
+                    <option key={sc} value={sc} />
+                  ))}
+                </datalist>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Amount (தொகை) ₹ *</label>
+            <div className="relative">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
+              <input 
+                type="number" 
+                name="amount"
+                value={formData.amount}
+                onChange={handleInputChange}
+                className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-lg text-lg font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="p-5 bg-slate-50 rounded-xl border border-slate-200/60 space-y-4">
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+              <FileText size={14} /> Documentation Details
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Vendor / Client Name</label>
+                <input 
+                  type="text" name="vendor" value={formData.vendor} onChange={handleInputChange}
+                  className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"
+                  placeholder={formType === 'income' ? "Client Name" : "Shop/Person Name"}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Bill / Invoice No</label>
+                <input 
+                  type="text" name="billNo" value={formData.billNo} onChange={handleInputChange}
+                  className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Payment Mode</label>
+                <select name="paymentMode" value={formData.paymentMode} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none">
+                  {PAYMENT_MODES.map(m => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Payment Status</label>
+                <select name="paymentStatus" value={formData.paymentStatus} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none">
+                  {PAYMENT_STATUS.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Notes</label>
+            <textarea 
+              name="notes"
+              value={formData.notes}
+              onChange={handleInputChange}
+              rows="2"
+              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
+              placeholder="Any additional details..."
+            ></textarea>
+          </div>
+
+          <div className="flex gap-4">
+            {editingId && (
+              <button 
+                type="button"
+                onClick={cancelEdit}
+                className="flex-1 py-3.5 rounded-lg text-slate-600 font-bold bg-slate-200 hover:bg-slate-300 transition-all"
+              >
+                Cancel
+              </button>
+            )}
+            <button 
+              type="submit" 
+              className={`flex-[2] py-3.5 rounded-lg text-white font-bold shadow-lg transform active:scale-95 transition-all flex items-center justify-center gap-2 
+                ${formType === 'income' 
+                  ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 shadow-emerald-200' 
+                  : 'bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 shadow-rose-200'}`}
+            >
+              {editingId ? <CheckCircle2 size={20} /> : <Save size={20} />}
+              {editingId ? 'Update Entry' : (formType === 'income' ? 'Save Income' : 'Save Expense')}
+            </button>
+          </div>
+
+        </form>
+      </Card>
+    </div>
+  );
+
+  const ReportsView = () => {
+    // Filter Logic for Ledger
+    const filteredTransactions = transactions.filter(t => {
+      const matchesSearch = 
+        t.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (t.subCategory && t.subCategory.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesProject = filterProject === 'All' || t.projectName === filterProject;
+      return matchesSearch && matchesProject;
+    });
+
+    const expenseBreakdown = transactions
+      .filter(t => t.type === 'expense')
+      .reduce((acc, curr) => {
+        acc[curr.category] = (acc[curr.category] || 0) + parseFloat(curr.amount);
+        return acc;
+      }, {});
+
+    const sortedExpenses = Object.entries(expenseBreakdown).sort((a, b) => b[1] - a[1]);
+
+    return (
+      <div className="space-y-8 animate-in fade-in duration-500">
+        
+        {/* Analytics Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+             <h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <Building2 size={20} className="text-blue-500" /> Project Summary
+             </h3>
+             <div className="space-y-4">
+                {projects.map(proj => {
+                  const pIncome = transactions.filter(t => t.projectName === proj && t.type === 'income').reduce((s, t) => s + t.amount, 0);
+                  const pExpense = transactions.filter(t => t.projectName === proj && t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+                  return (
+                    <div key={proj} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                      <div className="flex justify-between font-bold text-slate-800 mb-3">{proj}</div>
+                      <div className="flex justify-between text-sm text-slate-500 mb-2">
+                        <span>Inc: <span className="text-emerald-600 font-medium">₹{pIncome.toLocaleString()}</span></span>
+                        <span>Exp: <span className="text-rose-600 font-medium">₹{pExpense.toLocaleString()}</span></span>
+                      </div>
+                      <div className={`text-right font-bold text-sm pt-2 border-t border-slate-200 ${pIncome - pExpense >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
+                        {pIncome - pExpense >= 0 ? 'Profit' : 'Loss'}: ₹{(pIncome - pExpense).toLocaleString()}
+                      </div>
+                    </div>
+                  )
+                })}
+             </div>
+          </Card>
+
+          <Card>
+            <h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b border-slate-100 pb-3">
+              <PieChart size={20} className="text-rose-500" /> Expense Breakdown
+            </h3>
+            <div className="space-y-5 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+              {sortedExpenses.length > 0 ? (
+                sortedExpenses.map(([cat, amt]) => (
+                  <div key={cat}>
+                     <div className="flex justify-between text-sm mb-1.5">
+                       <span className="text-slate-600 font-medium">{cat}</span>
+                       <span className="font-bold text-slate-800">₹ {amt.toLocaleString()}</span>
+                     </div>
+                     <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                       <div 
+                        className="bg-gradient-to-r from-rose-500 to-rose-400 h-full rounded-full" 
+                        style={{ width: `${(amt / totalExpense) * 100}%` }}
+                       ></div>
+                     </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-10 text-slate-400">
+                  <PieChart size={48} className="opacity-20 mb-2" />
+                  <p>No expenses recorded yet.</p>
+                </div>
+              )}
+            </div>
+          </Card>
+        </div>
+
+        {/* Ledger / Transaction History Section */}
+        <Card>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+              <FileText size={20} className="text-indigo-500" /> Transaction Register (Ledger)
+            </h3>
+            
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <div className="relative">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search vendor, category..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 w-full"
+                />
+              </div>
+              <div className="relative">
+                <Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <select 
+                  value={filterProject} 
+                  onChange={(e) => setFilterProject(e.target.value)}
+                  className="pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 appearance-none w-full"
+                >
+                  <option value="All">All Projects</option>
+                  {projects.map(p => <option key={p} value={p}>{p}</option>)}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto rounded-lg border border-slate-200">
+            <table className="w-full text-left border-collapse bg-white">
+              <thead>
+                <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
+                  <th className="p-4">Date</th>
+                  <th className="p-4">Category / Item</th>
+                  <th className="p-4">Party / Bill</th>
+                  <th className="p-4 text-right">Amount</th>
+                  <th className="p-4 text-center">Status</th>
+                  <th className="p-4 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-sm divide-y divide-slate-100">
+                {filteredTransactions.map((t) => (
+                  <tr key={t.id} className="hover:bg-slate-50 transition-colors group">
+                    <td className="p-4 text-slate-600 whitespace-nowrap">{t.date}</td>
+                    <td className="p-4">
+                      <div className="font-semibold text-slate-800">{t.category}</div>
+                      {t.subCategory && <div className="text-xs text-indigo-600 mt-0.5">{t.subCategory}</div>}
+                    </td>
+                    <td className="p-4">
+                      <div className="text-slate-800">{t.vendor || '-'}</div>
+                      <div className="text-xs text-slate-500 mt-0.5">
+                        {t.billNo && `Bill: ${t.billNo}`} • {t.paymentMode}
+                      </div>
+                    </td>
+                    <td className={`p-4 text-right font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                      {t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}
+                    </td>
+                    <td className="p-4 text-center">
+                       <Badge type={t.paymentStatus === 'Paid' ? 'paid' : 'pending'}>{t.paymentStatus}</Badge>
+                    </td>
+                    <td className="p-4 text-center">
+                      <div className="flex justify-center gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button 
+                          onClick={() => handleEdit(t)} 
+                          className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors" 
+                          title="Edit"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                        <button 
+                          onClick={() => handleDelete(t.id)} 
+                          className="p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-md transition-colors" 
+                          title="Delete"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {filteredTransactions.length === 0 && (
+                  <tr>
+                    <td colSpan="6" className="p-12 text-center text-slate-400">
+                      <div className="flex flex-col items-center">
+                        <Search size={32} className="mb-2 opacity-50" />
+                        <p>No transactions found matching your filters.</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Card>
+      </div>
+    );
+  };
+
+  // --- Main Layout ---
+
+  return (
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20 md:pb-0">
+      {/* Professional Header */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="bg-indigo-600 p-2 rounded-lg text-white">
+              <Building2 size={24} />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-slate-800 leading-tight">Construction Manager</h1>
+              <p className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Finance Tracker</p>
+            </div>
+          </div>
+          <div className="text-right hidden sm:block">
+            <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Balance</div>
+            <div className={`font-bold text-xl ${balance >= 0 ? 'text-indigo-600' : 'text-rose-600'}`}>
+              ₹ {balance.toLocaleString('en-IN')}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content Area */}
+      <main className="max-w-6xl mx-auto p-4 md:p-8">
+        
+        {/* Desktop Tabs */}
+        <div className="hidden md:flex justify-center mb-8 bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 w-fit mx-auto">
+          {['dashboard', 'entry', 'reports'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-8 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${
+                activeTab === tab 
+                ? 'bg-slate-800 text-white shadow-md' 
+                : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+              }`}
+            >
+              {tab === 'dashboard' && <LayoutDashboard size={18} />}
+              {tab === 'entry' && <Plus size={18} />}
+              {tab === 'reports' && <FileText size={18} />}
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'dashboard' && <DashboardView />}
+        {activeTab === 'entry' && <EntryFormView />}
+        {activeTab === 'reports' && <ReportsView />}
+      </main>
+
+      {/* Mobile Navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 md:hidden z-30 pb-safe">
+        <div className="flex justify-around items-center h-16">
+          <button 
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'dashboard' ? 'text-indigo-600' : 'text-slate-400'}`}
+          >
+            <LayoutDashboard size={20} className={activeTab === 'dashboard' ? 'fill-indigo-100' : ''} />
+            <span className="text-[10px] font-medium">Dashboard</span>
+          </button>
+          <button 
+            onClick={() => setActiveTab('entry')}
+            className="flex flex-col items-center justify-center -mt-6"
+          >
+            <div className="bg-indigo-600 text-white p-4 rounded-full shadow-lg shadow-indigo-200 ring-4 ring-white">
+              <Plus size={24} />
+            </div>
+          </button>
+          <button 
+            onClick={() => setActiveTab('reports')}
+            className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'reports' ? 'text-indigo-600' : 'text-slate-400'}`}
+          >
+            <FileText size={20} className={activeTab === 'reports' ? 'fill-indigo-100' : ''} />
+            <span className="text-[10px] font-medium">Reports</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  );
+}
