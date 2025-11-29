@@ -9,37 +9,24 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
-    <!-- Babel for JSX (Updated to v7 for modern syntax support) -->
+    <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Custom Styles for Scrollbar -->
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- Custom Styles -->
     <style>
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        .pb-safe {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .animate-in {
-            animation: fadeIn 0.5s ease-out;
-        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-in { animation: fadeIn 0.4s ease-out; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -48,192 +35,159 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- Icon Components ---
-        const Icon = ({ children, size = 24, className = "" }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                {children}
-            </svg>
+        // --- Icons ---
+        const Icon = ({ children, size = 20, className = "" }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg>
         );
+        const Plus = (p) => <Icon {...p}><path d="M5 12h14"/><path d="M12 5v14"/></Icon>;
+        const Minus = (p) => <Icon {...p}><path d="M5 12h14"/></Icon>;
+        const Trash2 = (p) => <Icon {...p}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></Icon>;
+        const PieChart = (p) => <Icon {...p}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></Icon>;
+        const LayoutDashboard = (p) => <Icon {...p}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Icon>;
+        const Save = (p) => <Icon {...p}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></Icon>;
+        const FileText = (p) => <Icon {...p}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></Icon>;
+        const TrendingUp = (p) => <Icon {...p}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></Icon>;
+        const TrendingDown = (p) => <Icon {...p}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></Icon>;
+        const Wallet = (p) => <Icon {...p}><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></Icon>;
+        const Building2 = (p) => <Icon {...p}><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></Icon>;
+        const Edit2 = (p) => <Icon {...p}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></Icon>;
+        const Search = (p) => <Icon {...p}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></Icon>;
+        const Filter = (p) => <Icon {...p}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></Icon>;
+        const CheckCircle2 = (p) => <Icon {...p}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></Icon>;
+        const ArrowRight = (p) => <Icon {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></Icon>;
+        const Download = (p) => <Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></Icon>;
+        const Settings = (p) => <Icon {...p}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></Icon>;
+        const X = (p) => <Icon {...p}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon>;
 
-        const Plus = (props) => <Icon {...props}><path d="M5 12h14"/><path d="M12 5v14"/></Icon>;
-        const Minus = (props) => <Icon {...props}><path d="M5 12h14"/></Icon>;
-        const Trash2 = (props) => <Icon {...props}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></Icon>;
-        const PieChart = (props) => <Icon {...props}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></Icon>;
-        const LayoutDashboard = (props) => <Icon {...props}><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></Icon>;
-        const Save = (props) => <Icon {...props}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></Icon>;
-        const FileText = (props) => <Icon {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></Icon>;
-        const TrendingUp = (props) => <Icon {...props}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></Icon>;
-        const TrendingDown = (props) => <Icon {...props}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></Icon>;
-        const Wallet = (props) => <Icon {...props}><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></Icon>;
-        const Building2 = (props) => <Icon {...props}><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/><path d="M10 18h4"/></Icon>;
-        const Edit2 = (props) => <Icon {...props}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></Icon>;
-        const Search = (props) => <Icon {...props}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></Icon>;
-        const Filter = (props) => <Icon {...props}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></Icon>;
-        const CheckCircle2 = (props) => <Icon {...props}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></Icon>;
-        const ArrowRight = (props) => <Icon {...props}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></Icon>;
-
-        // --- Constants ---
-        const INCOME_CATEGORIES = [
-            "Advance Payment Received",
-            "Stage-wise Payment Received",
-            "Material Return Credits",
-            "Other Income (Scrap sale etc.)"
-        ];
-
+        // --- Data Constants ---
+        const INCOME_CATEGORIES = ["Advance Payment Received", "Stage-wise Payment Received", "Material Return Credits", "Other Income (Scrap sale etc.)"];
         const EXPENSE_CATEGORIES = {
-            "Material Expenses": [
-                "Cement", "Sand / M-Sand", "Bricks / Blocks", "Steel", "Stones / Aggregate",
-                "Paint & Primer", "Tiles / Marble / Granite", "Electrical Items", 
-                "Plumbing Items", "Wood / Doors / Windows", "Glass / False ceiling", "Others"
-            ],
-            "Labour Expenses": [
-                "Mason", "Helpers", "Carpenter", "Electrician", "Plumber", 
-                "Painter", "Fabrication workers", "Site supervisor salary", 
-                "Daily wage records", "Subcontractor payments"
-            ],
-            "Machinery & Equipment": [
-                "JCB, Tractor, Tipper rent", "Concrete mixer rent", "Scaffolding rent",
-                "Vibrator rent", "Drilling machine rent", "Generator Fuel & Maintenance"
-            ],
-            "Transport & Loading": [
-                "Material transport", "Loading / Unloading", "Fuel expenses"
-            ],
-            "Site Expenses": [
-                "Water (Tanker) charges", "EB Bill", "Site security salaries",
-                "Temporary shed / office", "Safety equipment"
-            ],
-            "Professional & Legal": [
-                "Architect fees", "Engineer fees", "Approval fees",
-                "Government charges", "Consultant fees"
-            ],
-            "Miscellaneous": [
-                "Phone / Internet", "Stationery", "Unexpected expenses", "Repairs / Service"
-            ]
+            "Material Expenses": ["Cement", "Sand / M-Sand", "Bricks / Blocks", "Steel", "Stones / Aggregate", "Paint & Primer", "Tiles / Marble / Granite", "Electrical Items", "Plumbing Items", "Wood / Doors / Windows", "Glass / False ceiling", "Others"],
+            "Labour Expenses": ["Mason", "Helpers", "Carpenter", "Electrician", "Plumber", "Painter", "Fabrication workers", "Site supervisor salary", "Daily wage records", "Subcontractor payments"],
+            "Machinery & Equipment": ["JCB, Tractor, Tipper rent", "Concrete mixer rent", "Scaffolding rent", "Vibrator rent", "Drilling machine rent", "Generator Fuel & Maintenance"],
+            "Transport & Loading": ["Material transport", "Loading / Unloading", "Fuel expenses"],
+            "Site Expenses": ["Water (Tanker) charges", "EB Bill", "Site security salaries", "Temporary shed / office", "Safety equipment"],
+            "Professional & Legal": ["Architect fees", "Engineer fees", "Approval fees", "Government charges", "Consultant fees"],
+            "Miscellaneous": ["Phone / Internet", "Stationery", "Unexpected expenses", "Repairs / Service"]
         };
-
         const PAYMENT_MODES = ["Cash", "UPI", "Bank Transfer", "Cheque"];
         const PAYMENT_STATUS = ["Paid", "Pending", "Partial"];
 
-        // --- UI Components ---
-        const Card = ({ children, className = "" }) => (
-            <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-5 ${className}`}>
-                {children}
-            </div>
-        );
-
+        // --- Helper Components ---
+        const Card = ({ children, className = "" }) => <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-5 ${className}`}>{children}</div>;
         const Badge = ({ children, type }) => {
-            const styles = {
-                income: "bg-emerald-100 text-emerald-800 border-emerald-200",
-                expense: "bg-rose-100 text-rose-800 border-rose-200",
-                neutral: "bg-slate-100 text-slate-700 border-slate-200",
-                pending: "bg-amber-100 text-amber-800 border-amber-200",
-                paid: "bg-emerald-50 text-emerald-700 border-emerald-200"
+            const styles = { income: "bg-emerald-100 text-emerald-800", expense: "bg-rose-100 text-rose-800", neutral: "bg-slate-100 text-slate-700", pending: "bg-amber-100 text-amber-800", paid: "bg-emerald-50 text-emerald-700" };
+            return <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${styles[type] || styles.neutral}`}>{children}</span>;
+        };
+
+        // --- Project Manager Modal ---
+        const ProjectManagerModal = ({ isOpen, onClose, projects, onRename, onDelete, onAdd }) => {
+            const [newProject, setNewProject] = useState("");
+            const [editingIndex, setEditingIndex] = useState(null);
+            const [editValue, setEditValue] = useState("");
+
+            if (!isOpen) return null;
+
+            const handleAdd = () => {
+                if(newProject.trim()){
+                    onAdd(newProject.trim());
+                    setNewProject("");
+                }
             };
+
+            const startEdit = (index, currentName) => {
+                setEditingIndex(index);
+                setEditValue(currentName);
+            };
+
+            const saveEdit = (index) => {
+                if(editValue.trim() && editValue !== projects[index]){
+                    onRename(projects[index], editValue.trim());
+                }
+                setEditingIndex(null);
+            };
+
             return (
-                <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${styles[type] || styles.neutral}`}>
-                    {children}
-                </span>
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                            <h3 className="font-bold text-slate-800 flex items-center gap-2"><Settings size={18}/> Manage Projects</h3>
+                            <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
+                        </div>
+                        <div className="p-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                            <div className="flex gap-2 mb-4">
+                                <input 
+                                    type="text" 
+                                    value={newProject}
+                                    onChange={(e) => setNewProject(e.target.value)}
+                                    placeholder="Add New Project Name"
+                                    className="flex-1 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
+                                />
+                                <button onClick={handleAdd} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700"><Plus size={20}/></button>
+                            </div>
+                            <div className="space-y-2">
+                                {projects.map((proj, idx) => (
+                                    <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                        {editingIndex === idx ? (
+                                            <div className="flex-1 flex gap-2">
+                                                <input 
+                                                    type="text" 
+                                                    value={editValue}
+                                                    onChange={(e) => setEditValue(e.target.value)}
+                                                    className="flex-1 p-1 border border-indigo-300 rounded text-sm"
+                                                    autoFocus
+                                                />
+                                                <button onClick={() => saveEdit(idx)} className="text-green-600"><CheckCircle2 size={18}/></button>
+                                                <button onClick={() => setEditingIndex(null)} className="text-slate-400"><X size={18}/></button>
+                                            </div>
+                                        ) : (
+                                            <>
+                                                <span className="flex-1 text-sm font-medium text-slate-700 truncate">{proj}</span>
+                                                <button onClick={() => startEdit(idx, proj)} className="text-blue-500 hover:bg-blue-100 p-1.5 rounded"><Edit2 size={16}/></button>
+                                                <button onClick={() => onDelete(proj)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button>
+                                            </>
+                                        )}
+                                    </div>
+                                ))}
+                                {projects.length === 0 && <p className="text-center text-slate-400 text-sm py-2">No projects added.</p>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             );
         };
 
-        // --- View Components (Defined OUTSIDE App) ---
+        // --- Sub-Views ---
 
         const DashboardView = ({ totalIncome, totalExpense, balance, transactions, setActiveTab, handleEdit, handleDelete }) => (
             <div className="space-y-6 animate-in">
-                {/* Summary Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <Card className="border-l-4 border-l-emerald-500 bg-gradient-to-br from-white to-emerald-50/50">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider">Total Income</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalIncome.toLocaleString('en-IN')}</h3>
-                            </div>
-                            <div className="p-3 bg-emerald-100 rounded-full shadow-sm">
-                                <TrendingUp className="w-6 h-6 text-emerald-600" />
-                            </div>
-                        </div>
+                        <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Total Income</p><h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalIncome.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-emerald-100 rounded-full"><TrendingUp className="w-6 h-6 text-emerald-600"/></div></div>
                     </Card>
-
                     <Card className="border-l-4 border-l-rose-500 bg-gradient-to-br from-white to-rose-50/50">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider">Total Expenses</p>
-                                <h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalExpense.toLocaleString('en-IN')}</h3>
-                            </div>
-                            <div className="p-3 bg-rose-100 rounded-full shadow-sm">
-                                <TrendingDown className="w-6 h-6 text-rose-600" />
-                            </div>
-                        </div>
+                        <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Total Expenses</p><h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalExpense.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-rose-100 rounded-full"><TrendingDown className="w-6 h-6 text-rose-600"/></div></div>
                     </Card>
-
                     <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-white to-blue-50/50">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-sm text-slate-500 font-semibold uppercase tracking-wider">Net Balance</p>
-                                <h3 className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-blue-700' : 'text-rose-600'}`}>
-                                    ₹ {balance.toLocaleString('en-IN')}
-                                </h3>
-                            </div>
-                            <div className="p-3 bg-blue-100 rounded-full shadow-sm">
-                                <Wallet className="w-6 h-6 text-blue-600" />
-                            </div>
-                        </div>
+                        <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Net Balance</p><h3 className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-blue-700' : 'text-rose-600'}`}>₹ {balance.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-blue-100 rounded-full"><Wallet className="w-6 h-6 text-blue-600"/></div></div>
                     </Card>
                 </div>
-
-                {/* Recent Transactions List */}
                 <Card className="overflow-hidden">
-                    <div className="flex justify-between items-center mb-6">
-                        <h3 className="font-bold text-lg text-slate-800">Recent Activity</h3>
-                        <button onClick={() => setActiveTab('reports')} className="text-sm text-blue-600 font-medium hover:underline flex items-center gap-1">
-                            View All <ArrowRight size={14} />
-                        </button>
-                    </div>
-                    
+                    <div className="flex justify-between items-center mb-6"><h3 className="font-bold text-lg text-slate-800">Recent Activity</h3><button onClick={() => setActiveTab('reports')} className="text-sm text-blue-600 font-medium hover:underline flex items-center gap-1">View All <ArrowRight size={14}/></button></div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-slate-50 text-slate-500 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
-                                    <th className="p-4">Date</th>
-                                    <th className="p-4">Details</th>
-                                    <th className="p-4">Amount</th>
-                                    <th className="p-4 text-center">Status</th>
-                                    <th className="p-4 text-center">Actions</th>
-                                </tr>
-                            </thead>
+                            <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-4">Date</th><th className="p-4">Details</th><th className="p-4">Amount</th><th className="p-4 text-center">Status</th><th className="p-4 text-center">Actions</th></tr></thead>
                             <tbody className="text-sm divide-y divide-slate-100">
                                 {transactions.slice(0, 5).map((t) => (
-                                    <tr key={t.id} className="hover:bg-slate-50 transition-colors">
+                                    <tr key={t.id} className="hover:bg-slate-50">
                                         <td className="p-4 text-slate-600 whitespace-nowrap">{t.date}</td>
-                                        <td className="p-4">
-                                            <div className="font-medium text-slate-800">{t.category}</div>
-                                            <div className="text-xs text-slate-500">{t.projectName} • {t.vendor}</div>
-                                        </td>
-                                        <td className={`p-4 font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                            {t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}
-                                        </td>
-                                        <td className="p-4 text-center">
-                                            <Badge type={t.paymentStatus === 'Paid' ? 'paid' : 'pending'}>{t.paymentStatus}</Badge>
-                                        </td>
-                                        <td className="p-4 text-center">
-                                            <div className="flex justify-center gap-2">
-                                                <button onClick={() => handleEdit(t)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded-md transition-colors" title="Edit">
-                                                    <Edit2 size={16} />
-                                                </button>
-                                                <button onClick={() => handleDelete(t.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Delete">
-                                                    <Trash2 size={16} />
-                                                </button>
-                                            </div>
-                                        </td>
+                                        <td className="p-4"><div className="font-medium text-slate-800">{t.category}</div><div className="text-xs text-slate-500">{t.projectName} • {t.vendor}</div></td>
+                                        <td className={`p-4 font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>{t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}</td>
+                                        <td className="p-4 text-center"><Badge type={t.paymentStatus === 'Paid' ? 'paid' : 'pending'}>{t.paymentStatus}</Badge></td>
+                                        <td className="p-4 text-center"><div className="flex justify-center gap-2"><button onClick={() => handleEdit(t)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded" title="Edit"><Edit2 size={16}/></button><button onClick={() => handleDelete(t.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded" title="Delete"><Trash2 size={16}/></button></div></td>
                                     </tr>
                                 ))}
-                                {transactions.length === 0 && (
-                                    <tr>
-                                        <td colSpan="5" className="p-8 text-center text-slate-400">
-                                            No transactions yet.
-                                        </td>
-                                    </tr>
-                                )}
+                                {transactions.length === 0 && <tr><td colSpan="5" className="p-8 text-center text-slate-400">No transactions yet.</td></tr>}
                             </tbody>
                         </table>
                     </div>
@@ -241,386 +195,198 @@
             </div>
         );
 
-        const EntryFormView = ({ 
-            formData, setFormData, formType, setFormType, editingId, 
-            cancelEdit, handleSubmit, handleInputChange, projects 
-        }) => (
-            <div className="max-w-4xl mx-auto space-y-6 animate-in">
-                
-                {editingId && (
-                    <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg flex justify-between items-center">
-                        <span className="flex items-center gap-2 text-sm font-medium">
-                            <Edit2 size={16} /> You are editing an existing entry.
-                        </span>
-                        <button onClick={cancelEdit} className="text-sm underline hover:text-amber-900">Cancel Edit</button>
+        const EntryFormView = ({ formData, setFormData, formType, setFormType, editingId, cancelEdit, handleSubmit, handleInputChange, projects, openProjectManager, formResetKey }) => {
+            const [isManualInput, setIsManualInput] = useState(false);
+
+            // Reset manual mode when form resets (new entry or cancel)
+            useEffect(() => {
+                setIsManualInput(false);
+            }, [formResetKey]);
+
+            // When editing an entry, determine mode based on whether project exists in list
+            useEffect(() => {
+                if (editingId && formData.projectName) {
+                    const isKnown = projects.includes(formData.projectName);
+                    setIsManualInput(!isKnown);
+                }
+            }, [editingId, formData.projectName, projects]);
+
+            return (
+                <div className="max-w-4xl mx-auto space-y-6 animate-in">
+                    {editingId && <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg flex justify-between items-center"><span className="flex items-center gap-2 text-sm font-medium"><Edit2 size={16}/> You are editing an existing entry.</span><button onClick={cancelEdit} className="text-sm underline hover:text-amber-900">Cancel Edit</button></div>}
+                    <div className="flex bg-slate-100 p-1.5 rounded-xl mb-6 shadow-inner">
+                        <button type="button" onClick={() => { setFormType('income'); if(!editingId) setFormData({...formData, category: ''}); }} className={`flex-1 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${formType === 'income' ? 'bg-white shadow-sm text-emerald-700' : 'text-slate-500'}`}><Plus size={18}/> Income (வரவு)</button>
+                        <button type="button" onClick={() => { setFormType('expense'); if(!editingId) setFormData({...formData, category: ''}); }} className={`flex-1 py-2.5 rounded-lg font-bold text-sm flex items-center justify-center gap-2 transition-all ${formType === 'expense' ? 'bg-white shadow-sm text-rose-700' : 'text-slate-500'}`}><Minus size={18}/> Expense (செலவு)</button>
                     </div>
-                )}
-
-                <div className="flex bg-slate-100 p-1.5 rounded-xl mb-6 shadow-inner">
-                    <button 
-                        type="button"
-                        onClick={() => { setFormType('income'); if(!editingId) setFormData({...formData, category: ''}); }}
-                        className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${formType === 'income' ? 'bg-white shadow-sm text-emerald-700 ring-1 ring-black/5' : 'text-slate-500 hover:bg-slate-200'}`}
-                    >
-                        <Plus size={18} /> Income (வரவு)
-                    </button>
-                    <button 
-                        type="button"
-                        onClick={() => { setFormType('expense'); if(!editingId) setFormData({...formData, category: ''}); }}
-                        className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 ${formType === 'expense' ? 'bg-white shadow-sm text-rose-700 ring-1 ring-black/5' : 'text-slate-500 hover:bg-slate-200'}`}
-                    >
-                        <Minus size={18} /> Expense (செலவு)
-                    </button>
-                </div>
-
-                <Card>
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Project Name *</label>
-                                <input 
-                                    type="text" 
-                                    name="projectName"
-                                    value={formData.projectName}
-                                    onChange={handleInputChange}
-                                    list="projects-list"
-                                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                    placeholder="Ex: Villa Project A"
-                                    required
-                                />
-                                <datalist id="projects-list">
-                                    {projects.map(p => <option key={p} value={p} />)}
-                                </datalist>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Date *</label>
-                                <input 
-                                    type="date" 
-                                    name="date"
-                                    value={formData.date}
-                                    onChange={handleInputChange}
-                                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Category (வகை) *</label>
-                                <select 
-                                    name="category"
-                                    value={formData.category}
-                                    onChange={(e) => {
-                                        handleInputChange(e);
-                                        if (!editingId) setFormData(prev => ({...prev, subCategory: '', category: e.target.value}));
-                                    }}
-                                    className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                    required
-                                >
-                                    <option value="">Select Category</option>
-                                    {formType === 'income' 
-                                        ? INCOME_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)
-                                        : Object.keys(EXPENSE_CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)
-                                    }
-                                </select>
-                            </div>
-
-                            {formType === 'expense' && formData.category && (
+                    <Card>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sub-Category (உப வகை)</label>
-                                    <input 
-                                        type="text"
-                                        name="subCategory"
-                                        value={formData.subCategory}
-                                        onChange={handleInputChange}
-                                        list="sub-category-list"
-                                        className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                        placeholder="Select or type new..."
-                                    />
-                                    <datalist id="sub-category-list">
-                                        {EXPENSE_CATEGORIES[formData.category] && EXPENSE_CATEGORIES[formData.category].map(sc => (
-                                            <option key={sc} value={sc} />
-                                        ))}
-                                    </datalist>
-                                </div>
-                            )}
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Amount (தொகை) ₹ *</label>
-                            <div className="relative">
-                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
-                                <input 
-                                    type="number" 
-                                    name="amount"
-                                    value={formData.amount}
-                                    onChange={handleInputChange}
-                                    className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-lg text-lg font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                    placeholder="0.00"
-                                    min="0"
-                                    step="0.01"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="p-5 bg-slate-50 rounded-xl border border-slate-200/60 space-y-4">
-                            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                                <FileText size={14} /> Documentation Details
-                            </h4>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-medium text-slate-600 mb-1">Vendor / Client Name</label>
-                                        <input 
-                                            type="text" name="vendor" value={formData.vendor} onChange={handleInputChange}
-                                            className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"
-                                            placeholder={formType === 'income' ? "Client Name" : "Shop/Person Name"}
-                                        />
-                                    </div>
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Project Name *</label>
                                     
-                                    <div>
-                                        <label className="block text-xs font-medium text-slate-600 mb-1">Bill / Invoice No</label>
-                                        <input 
-                                            type="text" name="billNo" value={formData.billNo} onChange={handleInputChange}
-                                            className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs font-medium text-slate-600 mb-1">Payment Mode</label>
-                                        <select name="paymentMode" value={formData.paymentMode} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none">
-                                            {PAYMENT_MODES.map(m => <option key={m} value={m}>{m}</option>)}
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-xs font-medium text-slate-600 mb-1">Payment Status</label>
-                                        <select name="paymentStatus" value={formData.paymentStatus} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none">
-                                            {PAYMENT_STATUS.map(s => <option key={s} value={s}>{s}</option>)}
-                                        </select>
-                                    </div>
+                                    {isManualInput ? (
+                                        <div className="flex gap-2">
+                                            <input 
+                                                type="text" 
+                                                name="projectName" 
+                                                value={formData.projectName} 
+                                                onChange={handleInputChange} 
+                                                className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                                                placeholder="Type New Project Name..." 
+                                                required 
+                                                autoFocus
+                                            />
+                                            <button 
+                                                type="button" 
+                                                onClick={() => { setIsManualInput(false); setFormData(p => ({...p, projectName: projects[0] || ''})) }} 
+                                                className="p-3 text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-lg border border-rose-200"
+                                                title="Cancel Manual Input"
+                                            >
+                                                <X size={20} />
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex gap-2">
+                                            <select 
+                                                name="projectName" 
+                                                value={formData.projectName} 
+                                                onChange={(e) => {
+                                                    if (e.target.value === '__NEW__') {
+                                                        setIsManualInput(true);
+                                                        setFormData(p => ({...p, projectName: ''}));
+                                                    } else {
+                                                        handleInputChange(e);
+                                                    }
+                                                }} 
+                                                className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
+                                                required
+                                            >
+                                                {projects.map(p => <option key={p} value={p}>{p}</option>)}
+                                                <option value="__NEW__" className="font-bold text-blue-600">+ Type New Project...</option>
+                                            </select>
+                                            <button 
+                                                type="button" 
+                                                onClick={openProjectManager} 
+                                                className="p-3 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300" 
+                                                title="Manage Projects"
+                                            >
+                                                <Settings size={20}/>
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
-                        </div>
-
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Notes</label>
-                            <textarea 
-                                name="notes"
-                                value={formData.notes}
-                                onChange={handleInputChange}
-                                rows="2"
-                                className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all"
-                                placeholder="Any additional details..."
-                            ></textarea>
-                        </div>
-
-                        <div className="flex gap-4">
-                            {editingId && (
-                                <button 
-                                    type="button"
-                                    onClick={cancelEdit}
-                                    className="flex-1 py-3.5 rounded-lg text-slate-600 font-bold bg-slate-200 hover:bg-slate-300 transition-all"
-                                >
-                                    Cancel
-                                </button>
-                            )}
-                            <button 
-                                type="submit" 
-                                className={`flex-[2] py-3.5 rounded-lg text-white font-bold shadow-lg transform active:scale-95 transition-all flex items-center justify-center gap-2 
-                                    ${formType === 'income' 
-                                        ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-700 hover:to-emerald-600 shadow-emerald-200' 
-                                        : 'bg-gradient-to-r from-rose-600 to-rose-500 hover:from-rose-700 hover:to-rose-600 shadow-rose-200'}`}
-                            >
-                                {editingId ? <CheckCircle2 size={20} /> : <Save size={20} />}
-                                {editingId ? 'Update Entry' : (formType === 'income' ? 'Save Income' : 'Save Expense')}
-                            </button>
-                        </div>
-
-                    </form>
-                </Card>
-            </div>
-        );
+                                <div>
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Date *</label>
+                                    <input type="date" name="date" value={formData.date} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Category (வகை) *</label>
+                                    <select name="category" value={formData.category} onChange={(e) => { handleInputChange(e); if (!editingId) setFormData(prev => ({...prev, subCategory: '', category: e.target.value})); }} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
+                                        <option value="">Select Category</option>
+                                        {formType === 'income' ? INCOME_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>) : Object.keys(EXPENSE_CATEGORIES).map(c => <option key={c} value={c}>{c}</option>)}
+                                    </select>
+                                </div>
+                                {formType === 'expense' && formData.category && (
+                                    <div>
+                                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Sub-Category (உப வகை)</label>
+                                        <input type="text" name="subCategory" value={formData.subCategory} onChange={handleInputChange} list="sub-category-list" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Select or type..." />
+                                        <datalist id="sub-category-list">{EXPENSE_CATEGORIES[formData.category] && EXPENSE_CATEGORIES[formData.category].map(sc => <option key={sc} value={sc}/>)}</datalist>
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Amount (தொகை) ₹ *</label>
+                                <div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span><input type="number" name="amount" value={formData.amount} onChange={handleInputChange} className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-lg text-lg font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00" min="0" step="0.01" required /></div>
+                            </div>
+                            <div className="p-5 bg-slate-50 rounded-xl border border-slate-200/60 space-y-4">
+                                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2"><FileText size={14}/> Documentation Details</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Vendor / Client</label><input type="text" name="vendor" value={formData.vendor} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"/></div>
+                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Bill No</label><input type="text" name="billNo" value={formData.billNo} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"/></div>
+                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Payment Mode</label><select name="paymentMode" value={formData.paymentMode} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md outline-none">{PAYMENT_MODES.map(m=><option key={m} value={m}>{m}</option>)}</select></div>
+                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Status</label><select name="paymentStatus" value={formData.paymentStatus} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md outline-none">{PAYMENT_STATUS.map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+                                </div>
+                            </div>
+                            <div><label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Notes</label><textarea name="notes" value={formData.notes} onChange={handleInputChange} rows="2" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Additional details..."></textarea></div>
+                            <div className="flex gap-4">
+                                {editingId && <button type="button" onClick={cancelEdit} className="flex-1 py-3.5 rounded-lg text-slate-600 font-bold bg-slate-200 hover:bg-slate-300">Cancel</button>}
+                                <button type="submit" className={`flex-[2] py-3.5 rounded-lg text-white font-bold shadow-lg flex items-center justify-center gap-2 ${formType === 'income' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`}>{editingId ? <CheckCircle2 size={20}/> : <Save size={20}/>} {editingId ? 'Update Entry' : 'Save Entry'}</button>
+                            </div>
+                        </form>
+                    </Card>
+                </div>
+            );
+        };
 
         const ReportsView = ({ transactions, projects, totalExpense, handleDelete, handleEdit }) => {
             const [searchTerm, setSearchTerm] = useState('');
             const [filterProject, setFilterProject] = useState('All');
 
-            // Filter Logic for Ledger
             const filteredTransactions = transactions.filter(t => {
-                const matchesSearch = 
-                    t.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    t.vendor.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    (t.subCategory && t.subCategory.toLowerCase().includes(searchTerm.toLowerCase()));
+                const matchesSearch = t.category.toLowerCase().includes(searchTerm.toLowerCase()) || t.vendor.toLowerCase().includes(searchTerm.toLowerCase()) || (t.subCategory && t.subCategory.toLowerCase().includes(searchTerm.toLowerCase()));
                 const matchesProject = filterProject === 'All' || t.projectName === filterProject;
                 return matchesSearch && matchesProject;
             });
 
-            const expenseBreakdown = transactions
-                .filter(t => t.type === 'expense')
-                .reduce((acc, curr) => {
-                    acc[curr.category] = (acc[curr.category] || 0) + parseFloat(curr.amount);
-                    return acc;
-                }, {});
+            const sortedExpenses = Object.entries(transactions.filter(t => t.type === 'expense').reduce((acc, curr) => {
+                acc[curr.category] = (acc[curr.category] || 0) + parseFloat(curr.amount);
+                return acc;
+            }, {})).sort((a, b) => b[1] - a[1]);
 
-            const sortedExpenses = Object.entries(expenseBreakdown).sort((a, b) => b[1] - a[1]);
+            // --- Export to Excel Function ---
+            const exportToExcel = () => {
+                // 1. Prepare data
+                const dataToExport = filteredTransactions.map(t => ({
+                    "Date": t.date,
+                    "Project Name": t.projectName,
+                    "Type": t.type === 'income' ? 'Income' : 'Expense',
+                    "Category": t.category,
+                    "Sub-Category": t.subCategory || '-',
+                    "Vendor/Party": t.vendor || '-',
+                    "Bill No": t.billNo || '-',
+                    "Payment Mode": t.paymentMode,
+                    "Status": t.paymentStatus,
+                    "Amount (INR)": parseFloat(t.amount),
+                    "Notes": t.notes || '-'
+                }));
+
+                // 2. Create Sheet
+                const ws = XLSX.utils.json_to_sheet(dataToExport);
+                
+                // 3. Create Workbook
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+
+                // 4. Download
+                const fileName = `Construction_Tracker_${new Date().toISOString().split('T')[0]}.xlsx`;
+                XLSX.writeFile(wb, fileName);
+            };
 
             return (
                 <div className="space-y-8 animate-in">
-                    
-                    {/* Analytics Section */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <Card>
-                            <h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b border-slate-100 pb-3">
-                                <Building2 size={20} className="text-blue-500" /> Project Summary
-                            </h3>
-                            <div className="space-y-4">
-                                {projects.map(proj => {
-                                    const pIncome = transactions.filter(t => t.projectName === proj && t.type === 'income').reduce((s, t) => s + t.amount, 0);
-                                    const pExpense = transactions.filter(t => t.projectName === proj && t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-                                    return (
-                                        <div key={proj} className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-                                            <div className="flex justify-between font-bold text-slate-800 mb-3">{proj}</div>
-                                            <div className="flex justify-between text-sm text-slate-500 mb-2">
-                                                <span>Inc: <span className="text-emerald-600 font-medium">₹{pIncome.toLocaleString()}</span></span>
-                                                <span>Exp: <span className="text-rose-600 font-medium">₹{pExpense.toLocaleString()}</span></span>
-                                            </div>
-                                            <div className={`text-right font-bold text-sm pt-2 border-t border-slate-200 ${pIncome - pExpense >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>
-                                                {pIncome - pExpense >= 0 ? 'Profit' : 'Loss'}: ₹{(pIncome - pExpense).toLocaleString()}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </Card>
-
-                        <Card>
-                            <h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b border-slate-100 pb-3">
-                                <PieChart size={20} className="text-rose-500" /> Expense Breakdown
-                            </h3>
-                            <div className="space-y-5 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                                {sortedExpenses.length > 0 ? (
-                                    sortedExpenses.map(([cat, amt]) => (
-                                        <div key={cat}>
-                                            <div className="flex justify-between text-sm mb-1.5">
-                                                <span className="text-slate-600 font-medium">{cat}</span>
-                                                <span className="font-bold text-slate-800">₹ {amt.toLocaleString()}</span>
-                                            </div>
-                                            <div className="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                                <div 
-                                                    className="bg-gradient-to-r from-rose-500 to-rose-400 h-full rounded-full" 
-                                                    style={{ width: `${(amt / totalExpense) * 100}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <div className="flex flex-col items-center justify-center py-10 text-slate-400">
-                                        <PieChart size={48} className="opacity-20 mb-2" />
-                                        <p>No expenses recorded yet.</p>
-                                    </div>
-                                )}
-                            </div>
-                        </Card>
+                        <Card><h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3"><Building2 size={20} className="text-blue-500"/> Project Summary</h3><div className="space-y-4">{projects.map(proj => {
+                            const pInc = transactions.filter(t => t.projectName === proj && t.type === 'income').reduce((s,t)=>s+t.amount,0);
+                            const pExp = transactions.filter(t => t.projectName === proj && t.type === 'expense').reduce((s,t)=>s+t.amount,0);
+                            return <div key={proj} className="p-4 bg-slate-50 rounded-xl border border-slate-100"><div className="flex justify-between font-bold text-slate-800 mb-2">{proj}</div><div className="flex justify-between text-sm mb-1"><span>Inc: <span className="text-emerald-600">₹{pInc.toLocaleString()}</span></span><span>Exp: <span className="text-rose-600">₹{pExp.toLocaleString()}</span></span></div><div className={`text-right font-bold text-sm pt-2 border-t ${pInc-pExp>=0?'text-blue-600':'text-rose-600'}`}>{pInc-pExp>=0?'Profit':'Loss'}: ₹{(pInc-pExp).toLocaleString()}</div></div>
+                        })}</div></Card>
+                        <Card><h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3"><PieChart size={20} className="text-rose-500"/> Expense Breakdown</h3><div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">{sortedExpenses.map(([c,a])=><div key={c}><div className="flex justify-between text-sm mb-1"><span>{c}</span><span className="font-bold">₹ {a.toLocaleString()}</span></div><div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-rose-500 h-full rounded-full" style={{width:`${(a/totalExpense)*100}%`}}></div></div></div>)}</div></Card>
                     </div>
-
-                    {/* Ledger / Transaction History Section */}
                     <Card>
                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                            <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
-                                <FileText size={20} className="text-indigo-500" /> Transaction Register (Ledger)
-                            </h3>
-                            
+                            <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><FileText size={20} className="text-indigo-500"/> Transaction Ledger</h3>
                             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                                <div className="relative">
-                                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                    <input 
-                                        type="text" 
-                                        placeholder="Search vendor, category..." 
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                        className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 w-full"
-                                    />
-                                </div>
-                                <div className="relative">
-                                    <Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                                    <select 
-                                        value={filterProject} 
-                                        onChange={(e) => setFilterProject(e.target.value)}
-                                        className="pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 appearance-none w-full"
-                                    >
-                                        <option value="All">All Projects</option>
-                                        {projects.map(p => <option key={p} value={p}>{p}</option>)}
-                                    </select>
-                                </div>
+                                <button onClick={exportToExcel} className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 shadow-sm"><Download size={16}/> Download Excel</button>
+                                <div className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><input type="text" placeholder="Search..." value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 w-full"/></div>
+                                <div className="relative"><Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><select value={filterProject} onChange={(e)=>setFilterProject(e.target.value)} className="pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 appearance-none w-full"><option value="All">All Projects</option>{projects.map(p=><option key={p} value={p}>{p}</option>)}</select></div>
                             </div>
                         </div>
-
                         <div className="overflow-x-auto rounded-lg border border-slate-200">
                             <table className="w-full text-left border-collapse bg-white">
-                                <thead>
-                                    <tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider border-b border-slate-200">
-                                        <th className="p-4">Date</th>
-                                        <th className="p-4">Category / Item</th>
-                                        <th className="p-4">Party / Bill</th>
-                                        <th className="p-4 text-right">Amount</th>
-                                        <th className="p-4 text-center">Status</th>
-                                        <th className="p-4 text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="text-sm divide-y divide-slate-100">
-                                    {filteredTransactions.map((t) => (
-                                        <tr key={t.id} className="hover:bg-slate-50 transition-colors group">
-                                            <td className="p-4 text-slate-600 whitespace-nowrap">{t.date}</td>
-                                            <td className="p-4">
-                                                <div className="font-semibold text-slate-800">{t.category}</div>
-                                                {t.subCategory && <div className="text-xs text-indigo-600 mt-0.5">{t.subCategory}</div>}
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="text-slate-800">{t.vendor || '-'}</div>
-                                                <div className="text-xs text-slate-500 mt-0.5">
-                                                    {t.billNo && `Bill: ${t.billNo}`} • {t.paymentMode}
-                                                </div>
-                                            </td>
-                                            <td className={`p-4 text-right font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                                {t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}
-                                            </td>
-                                            <td className="p-4 text-center">
-                                                <Badge type={t.paymentStatus === 'Paid' ? 'paid' : 'pending'}>{t.paymentStatus}</Badge>
-                                            </td>
-                                            <td className="p-4 text-center">
-                                                <div className="flex justify-center gap-2 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <button 
-                                                        onClick={() => handleEdit(t)} 
-                                                        className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors" 
-                                                        title="Edit"
-                                                    >
-                                                        <Edit2 size={16} />
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => handleDelete(t.id)} 
-                                                        className="p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-md transition-colors" 
-                                                        title="Delete"
-                                                    >
-                                                        <Trash2 size={16} />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {filteredTransactions.length === 0 && (
-                                        <tr>
-                                            <td colSpan="6" className="p-12 text-center text-slate-400">
-                                                <div className="flex flex-col items-center">
-                                                    <Search size={32} className="mb-2 opacity-50" />
-                                                    <p>No transactions found matching your filters.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
+                                <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-4">Date</th><th className="p-4">Details</th><th className="p-4">Party</th><th className="p-4 text-right">Amount</th><th className="p-4 text-center">Status</th><th className="p-4 text-center">Actions</th></tr></thead>
+                                <tbody className="text-sm divide-y divide-slate-100">{filteredTransactions.map(t=><tr key={t.id} className="hover:bg-slate-50"><td className="p-4 whitespace-nowrap text-slate-600">{t.date}</td><td className="p-4"><div className="font-semibold text-slate-800">{t.category}</div>{t.subCategory&&<div className="text-xs text-indigo-600">{t.subCategory}</div>}</td><td className="p-4"><div className="text-slate-800">{t.vendor||'-'}</div><div className="text-xs text-slate-500">{t.billNo && `Bill: ${t.billNo}`}</div></td><td className={`p-4 text-right font-bold whitespace-nowrap ${t.type==='income'?'text-emerald-600':'text-rose-600'}`}>{t.type==='income'?'+':'-'} ₹{t.amount.toLocaleString('en-IN')}</td><td className="p-4 text-center"><Badge type={t.paymentStatus==='Paid'?'paid':'pending'}>{t.paymentStatus}</Badge></td><td className="p-4 text-center"><div className="flex justify-center gap-2"><button onClick={()=>handleEdit(t)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded"><Edit2 size={16}/></button><button onClick={()=>handleDelete(t.id)} className="p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded"><Trash2 size={16}/></button></div></td></tr>)}</tbody>
                             </table>
                         </div>
                     </Card>
@@ -628,251 +394,133 @@
             );
         };
 
-        // --- Main App Component ---
+        // --- Main App ---
         function App() {
-            // State
             const [activeTab, setActiveTab] = useState('dashboard');
             const [transactions, setTransactions] = useState([]);
             const [projects, setProjects] = useState(['Main Project']);
-            
-            // Edit Mode State
             const [editingId, setEditingId] = useState(null);
-            
-            // Form State
             const [formType, setFormType] = useState('expense');
-            const [formData, setFormData] = useState({
-                date: new Date().toISOString().split('T')[0],
-                projectName: 'Main Project',
-                category: '',
-                subCategory: '',
-                amount: '',
-                vendor: '',
-                billNo: '',
-                paymentMode: 'Cash',
-                paymentStatus: 'Paid',
-                notes: ''
-            });
+            const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
+            const [formData, setFormData] = useState({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' });
+            const [formResetKey, setFormResetKey] = useState(0);
 
-            // Load data
+            // Load Data
             useEffect(() => {
                 const savedData = localStorage.getItem('construction_tracker_data');
-                if (savedData) {
-                    setTransactions(JSON.parse(savedData));
-                }
+                const savedProjects = localStorage.getItem('construction_tracker_projects');
+                if (savedData) setTransactions(JSON.parse(savedData));
+                if (savedProjects) setProjects(JSON.parse(savedProjects));
             }, []);
 
-            // Save data
+            // Save Data
             useEffect(() => {
                 localStorage.setItem('construction_tracker_data', JSON.stringify(transactions));
             }, [transactions]);
 
-            // Calculations
-            const totalIncome = transactions
-                .filter(t => t.type === 'income')
-                .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
+            useEffect(() => {
+                localStorage.setItem('construction_tracker_projects', JSON.stringify(projects));
+            }, [projects]);
 
-            const totalExpense = transactions
-                .filter(t => t.type === 'expense')
-                .reduce((sum, t) => sum + parseFloat(t.amount || 0), 0);
-
+            const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount || 0), 0);
+            const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount || 0), 0);
             const balance = totalIncome - totalExpense;
 
-            // Handlers
-            const handleInputChange = (e) => {
-                const { name, value } = e.target;
-                setFormData(prev => ({ ...prev, [name]: value }));
-            };
+            const handleInputChange = (e) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, [name]: value })); };
 
-            const handleEdit = (transaction) => {
-                setEditingId(transaction.id);
-                setFormType(transaction.type);
-                setFormData({
-                    date: transaction.date,
-                    projectName: transaction.projectName,
-                    category: transaction.category,
-                    subCategory: transaction.subCategory || '',
-                    amount: transaction.amount,
-                    vendor: transaction.vendor || '',
-                    billNo: transaction.billNo || '',
-                    paymentMode: transaction.paymentMode,
-                    paymentStatus: transaction.paymentStatus,
-                    notes: transaction.notes || ''
-                });
-                setActiveTab('entry');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+            const handleEdit = (t) => {
+                setEditingId(t.id); setFormType(t.type);
+                setFormData({ date: t.date, projectName: t.projectName, category: t.category, subCategory: t.subCategory || '', amount: t.amount, vendor: t.vendor || '', billNo: t.billNo || '', paymentMode: t.paymentMode, paymentStatus: t.paymentStatus, notes: t.notes || '' });
+                setActiveTab('entry'); window.scrollTo({ top: 0, behavior: 'smooth' });
             };
 
             const cancelEdit = () => {
                 setEditingId(null);
-                setFormData({
-                    date: new Date().toISOString().split('T')[0],
-                    projectName: 'Main Project',
-                    category: '',
-                    subCategory: '',
-                    amount: '',
-                    vendor: '',
-                    billNo: '',
-                    paymentMode: 'Cash',
-                    paymentStatus: 'Paid',
-                    notes: ''
-                });
+                setFormData({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' });
+                setFormResetKey(prev => prev + 1);
             };
 
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (!formData.amount || !formData.category) return;
-
-                const newTransaction = {
-                    id: editingId || Date.now().toString(),
-                    type: formType,
-                    ...formData,
-                    amount: parseFloat(formData.amount)
-                };
-
-                if (editingId) {
-                    // Update existing
-                    setTransactions(prev => prev.map(t => t.id === editingId ? newTransaction : t));
-                    alert("Entry Updated Successfully! / பதிவு மாற்றப்பட்டது!");
-                } else {
-                    // Create new
-                    setTransactions([newTransaction, ...transactions]);
-                    alert("Entry Added Successfully! / பதிவு சேர்க்கப்பட்டது!");
-                }
-
-                // Reset Form
+                const newTransaction = { id: editingId || Date.now().toString(), type: formType, ...formData, amount: parseFloat(formData.amount) };
+                if (editingId) { setTransactions(prev => prev.map(t => t.id === editingId ? newTransaction : t)); alert("Entry Updated Successfully!"); }
+                else { setTransactions([newTransaction, ...transactions]); alert("Entry Added Successfully!"); }
+                
+                // Add project if new
+                if (!projects.includes(formData.projectName)) { setProjects(prev => [...prev, formData.projectName]); }
+                
                 setEditingId(null);
-                setFormData(prev => ({
-                    ...prev,
-                    category: '',
-                    subCategory: '',
-                    amount: '',
-                    vendor: '',
-                    billNo: '',
-                    notes: ''
-                }));
+                setFormData(prev => ({ ...prev, category: '', subCategory: '', amount: '', vendor: '', billNo: '', notes: '' }));
+                setFormResetKey(prev => prev + 1);
+            };
 
-                if (!projects.includes(formData.projectName)) {
-                    setProjects([...projects, formData.projectName]);
+            const handleDelete = (id) => { if (confirm("Delete this entry?")) setTransactions(transactions.filter(t => t.id !== id)); };
+
+            // Project Manager Functions
+            const handleAddProject = (name) => {
+                if(!projects.includes(name)) setProjects([...projects, name]);
+            };
+
+            const handleRenameProject = (oldName, newName) => {
+                if(projects.includes(newName)) { alert("Project name already exists!"); return; }
+                // Update List
+                setProjects(projects.map(p => p === oldName ? newName : p));
+                // Update Transactions History
+                setTransactions(transactions.map(t => t.projectName === oldName ? { ...t, projectName: newName } : t));
+                // Update Current Form if needed
+                if(formData.projectName === oldName) setFormData({...formData, projectName: newName});
+            };
+
+            const handleDeleteProject = (name) => {
+                if(confirm(`Delete project "${name}"? Transactions associated with this project will NOT be deleted, but the name will be removed from the list.`)){
+                    setProjects(projects.filter(p => p !== name));
                 }
             };
 
-            const handleDelete = (id) => {
-                if (confirm("Are you sure you want to delete this entry? / இந்த பதிவை நீக்க விரும்புகிறீர்களா?")) {
-                    setTransactions(transactions.filter(t => t.id !== id));
-                }
-            };
-
-            // --- Main Layout ---
             return (
                 <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20 md:pb-0">
-                    {/* Professional Header */}
                     <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
                         <div className="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-indigo-600 p-2 rounded-lg text-white">
-                                    <Building2 size={24} />
-                                </div>
-                                <div>
-                                    <h1 className="text-lg font-bold text-slate-800 leading-tight">Construction Manager</h1>
-                                    <p className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Finance Tracker</p>
-                                </div>
-                            </div>
-                            <div className="text-right hidden sm:block">
-                                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Balance</div>
-                                <div className={`font-bold text-xl ${balance >= 0 ? 'text-indigo-600' : 'text-rose-600'}`}>
-                                    ₹ {balance.toLocaleString('en-IN')}
-                                </div>
-                            </div>
+                            <div className="flex items-center gap-3"><div className="bg-indigo-600 p-2 rounded-lg text-white"><Building2 size={24}/></div><div><h1 className="text-lg font-bold text-slate-800 leading-tight">Construction Manager</h1><p className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Finance Tracker</p></div></div>
+                            <div className="text-right hidden sm:block"><div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Balance</div><div className={`font-bold text-xl ${balance >= 0 ? 'text-indigo-600' : 'text-rose-600'}`}>₹ {balance.toLocaleString('en-IN')}</div></div>
                         </div>
                     </header>
 
-                    {/* Main Content Area */}
                     <main className="max-w-6xl mx-auto p-4 md:p-8">
-                        
-                        {/* Desktop Tabs */}
                         <div className="hidden md:flex justify-center mb-8 bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 w-fit mx-auto">
-                            {['dashboard', 'entry', 'reports'].map((tab) => (
-                                <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab)}
-                                    className={`px-8 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${
-                                        activeTab === tab 
-                                        ? 'bg-slate-800 text-white shadow-md' 
-                                        : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
-                                    }`}
-                                >
-                                    {tab === 'dashboard' && <LayoutDashboard size={18} />}
-                                    {tab === 'entry' && <Plus size={18} />}
-                                    {tab === 'reports' && <FileText size={18} />}
+                            {['dashboard', 'entry', 'reports'].map(tab => (
+                                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-8 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${activeTab === tab ? 'bg-slate-800 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                                    {tab === 'dashboard' && <LayoutDashboard size={18}/>}
+                                    {tab === 'entry' && <Plus size={18}/>}
+                                    {tab === 'reports' && <FileText size={18}/>}
                                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                                 </button>
                             ))}
                         </div>
 
-                        {activeTab === 'dashboard' && (
-                            <DashboardView 
-                                totalIncome={totalIncome}
-                                totalExpense={totalExpense}
-                                balance={balance}
-                                transactions={transactions}
-                                setActiveTab={setActiveTab}
-                                handleEdit={handleEdit}
-                                handleDelete={handleDelete}
-                            />
-                        )}
-                        
-                        {activeTab === 'entry' && (
-                            <EntryFormView 
-                                formData={formData}
-                                setFormData={setFormData}
-                                formType={formType}
-                                setFormType={setFormType}
-                                editingId={editingId}
-                                cancelEdit={cancelEdit}
-                                handleSubmit={handleSubmit}
-                                handleInputChange={handleInputChange}
-                                projects={projects}
-                            />
-                        )}
-
-                        {activeTab === 'reports' && (
-                            <ReportsView 
-                                transactions={transactions}
-                                projects={projects}
-                                totalExpense={totalExpense}
-                                handleDelete={handleDelete}
-                                handleEdit={handleEdit}
-                            />
-                        )}
+                        {activeTab === 'dashboard' && <DashboardView totalIncome={totalIncome} totalExpense={totalExpense} balance={balance} transactions={transactions} setActiveTab={setActiveTab} handleEdit={handleEdit} handleDelete={handleDelete}/>}
+                        {activeTab === 'entry' && <EntryFormView formData={formData} setFormData={setFormData} formType={formType} setFormType={setFormType} editingId={editingId} cancelEdit={cancelEdit} handleSubmit={handleSubmit} handleInputChange={handleInputChange} projects={projects} openProjectManager={() => setIsProjectManagerOpen(true)} formResetKey={formResetKey} />}
+                        {activeTab === 'reports' && <ReportsView transactions={transactions} projects={projects} totalExpense={totalExpense} handleDelete={handleDelete} handleEdit={handleEdit}/>}
                     </main>
 
-                    {/* Mobile Navigation */}
+                    {/* Mobile Nav */}
                     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 md:hidden z-30 pb-safe">
                         <div className="flex justify-around items-center h-16">
-                            <button 
-                                onClick={() => setActiveTab('dashboard')}
-                                className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'dashboard' ? 'text-indigo-600' : 'text-slate-400'}`}
-                            >
-                                <LayoutDashboard size={20} className={activeTab === 'dashboard' ? 'fill-indigo-100' : ''} />
-                                <span className="text-[10px] font-medium">Dashboard</span>
-                            </button>
-                            <button 
-                                onClick={() => setActiveTab('entry')}
-                                className="flex flex-col items-center justify-center -mt-6"
-                            >
-                                <div className="bg-indigo-600 text-white p-4 rounded-full shadow-lg shadow-indigo-200 ring-4 ring-white">
-                                    <Plus size={24} />
-                                </div>
-                            </button>
-                            <button 
-                                onClick={() => setActiveTab('reports')}
-                                className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'reports' ? 'text-indigo-600' : 'text-slate-400'}`}
-                            >
-                                <FileText size={20} className={activeTab === 'reports' ? 'fill-indigo-100' : ''} />
-                                <span className="text-[10px] font-medium">Reports</span>
-                            </button>
+                            <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'dashboard' ? 'text-indigo-600' : 'text-slate-400'}`}><LayoutDashboard size={20}/><span className="text-[10px] font-medium">Dashboard</span></button>
+                            <button onClick={() => setActiveTab('entry')} className="flex flex-col items-center justify-center -mt-6"><div className="bg-indigo-600 text-white p-4 rounded-full shadow-lg ring-4 ring-white"><Plus size={24}/></div></button>
+                            <button onClick={() => setActiveTab('reports')} className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'reports' ? 'text-indigo-600' : 'text-slate-400'}`}><FileText size={20}/><span className="text-[10px] font-medium">Reports</span></button>
                         </div>
                     </nav>
+
+                    <ProjectManagerModal 
+                        isOpen={isProjectManagerOpen} 
+                        onClose={() => setIsProjectManagerOpen(false)}
+                        projects={projects}
+                        onRename={handleRenameProject}
+                        onDelete={handleDeleteProject}
+                        onAdd={handleAddProject}
+                    />
                 </div>
             );
         }
@@ -882,5 +530,3 @@
     </script>
 </body>
 </html>
-
-
