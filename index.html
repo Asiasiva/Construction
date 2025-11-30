@@ -27,6 +27,8 @@
         .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .animate-in { animation: fadeIn 0.4s ease-out; }
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900">
@@ -58,6 +60,9 @@
         const Download = (p) => <Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></Icon>;
         const Settings = (p) => <Icon {...p}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></Icon>;
         const X = (p) => <Icon {...p}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon>;
+        const Lock = (p) => <Icon {...p}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></Icon>;
+        const Users = (p) => <Icon {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>;
+        const Clock = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
 
         // --- Data Constants ---
         const INCOME_CATEGORIES = ["Advance Payment Received", "Stage-wise Payment Received", "Material Return Credits", "Other Income (Scrap sale etc.)"];
@@ -80,72 +85,48 @@
             return <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${styles[type] || styles.neutral}`}>{children}</span>;
         };
 
+        // --- Authentication Component ---
+        const LoginScreen = ({ onLogin }) => {
+            const [password, setPassword] = useState("");
+            const [error, setError] = useState(false);
+            const handleSubmit = (e) => { e.preventDefault(); if (password === "S/i2i2") onLogin(); else { setError(true); setPassword(""); setTimeout(() => setError(false), 500); } };
+            return (
+                <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+                    <Card className={`w-full max-w-sm p-8 text-center space-y-6 ${error ? 'shake' : ''}`}>
+                        <div className="bg-indigo-600 w-16 h-16 rounded-full flex items-center justify-center mx-auto shadow-lg shadow-indigo-200"><Lock size={32} className="text-white" /></div>
+                        <div><h2 className="text-xl font-bold text-slate-800">Secure Access</h2><p className="text-sm text-slate-500 mt-1">Please enter password to view tracker</p></div>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className={`w-full p-3 border rounded-lg outline-none text-center tracking-widest font-bold text-lg focus:ring-2 ${error ? 'border-red-500 ring-red-200' : 'border-slate-300 ring-indigo-200 focus:border-indigo-500'}`} placeholder="••••••••" autoFocus />
+                            {error && <p className="text-xs text-red-500 font-bold">Incorrect Password!</p>}
+                            <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold transition-all transform active:scale-95">Unlock</button>
+                        </form>
+                    </Card>
+                </div>
+            );
+        };
+
         // --- Project Manager Modal ---
         const ProjectManagerModal = ({ isOpen, onClose, projects, onRename, onDelete, onAdd }) => {
             const [newProject, setNewProject] = useState("");
             const [editingIndex, setEditingIndex] = useState(null);
             const [editValue, setEditValue] = useState("");
-
             if (!isOpen) return null;
-
-            const handleAdd = () => {
-                if(newProject.trim()){
-                    onAdd(newProject.trim());
-                    setNewProject("");
-                }
-            };
-
-            const startEdit = (index, currentName) => {
-                setEditingIndex(index);
-                setEditValue(currentName);
-            };
-
-            const saveEdit = (index) => {
-                if(editValue.trim() && editValue !== projects[index]){
-                    onRename(projects[index], editValue.trim());
-                }
-                setEditingIndex(null);
-            };
+            const handleAdd = () => { if(newProject.trim()){ onAdd(newProject.trim()); setNewProject(""); } };
+            const saveEdit = (index) => { if(editValue.trim() && editValue !== projects[index]){ onRename(projects[index], editValue.trim()); } setEditingIndex(null); };
 
             return (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in">
-                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                            <h3 className="font-bold text-slate-800 flex items-center gap-2"><Settings size={18}/> Manage Projects</h3>
-                            <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={20}/></button>
-                        </div>
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50"><h3 className="font-bold text-slate-800 flex items-center gap-2"><Settings size={18}/> Manage Projects</h3><button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={20}/></button></div>
                         <div className="p-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                            <div className="flex gap-2 mb-4">
-                                <input 
-                                    type="text" 
-                                    value={newProject}
-                                    onChange={(e) => setNewProject(e.target.value)}
-                                    placeholder="Add New Project Name"
-                                    className="flex-1 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-                                />
-                                <button onClick={handleAdd} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700"><Plus size={20}/></button>
-                            </div>
+                            <div className="flex gap-2 mb-4"><input type="text" value={newProject} onChange={(e) => setNewProject(e.target.value)} placeholder="Add New Project Name" className="flex-1 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"/><button onClick={handleAdd} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700"><Plus size={20}/></button></div>
                             <div className="space-y-2">
                                 {projects.map((proj, idx) => (
                                     <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100">
                                         {editingIndex === idx ? (
-                                            <div className="flex-1 flex gap-2">
-                                                <input 
-                                                    type="text" 
-                                                    value={editValue}
-                                                    onChange={(e) => setEditValue(e.target.value)}
-                                                    className="flex-1 p-1 border border-indigo-300 rounded text-sm"
-                                                    autoFocus
-                                                />
-                                                <button onClick={() => saveEdit(idx)} className="text-green-600"><CheckCircle2 size={18}/></button>
-                                                <button onClick={() => setEditingIndex(null)} className="text-slate-400"><X size={18}/></button>
-                                            </div>
+                                            <div className="flex-1 flex gap-2"><input type="text" value={editValue} onChange={(e) => setEditValue(e.target.value)} className="flex-1 p-1 border border-indigo-300 rounded text-sm" autoFocus /><button onClick={() => saveEdit(idx)} className="text-green-600"><CheckCircle2 size={18}/></button><button onClick={() => setEditingIndex(null)} className="text-slate-400"><X size={18}/></button></div>
                                         ) : (
-                                            <>
-                                                <span className="flex-1 text-sm font-medium text-slate-700 truncate">{proj}</span>
-                                                <button onClick={() => startEdit(idx, proj)} className="text-blue-500 hover:bg-blue-100 p-1.5 rounded"><Edit2 size={16}/></button>
-                                                <button onClick={() => onDelete(proj)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button>
-                                            </>
+                                            <><span className="flex-1 text-sm font-medium text-slate-700 truncate">{proj}</span><button onClick={() => { setEditingIndex(idx); setEditValue(proj); }} className="text-blue-500 hover:bg-blue-100 p-1.5 rounded"><Edit2 size={16}/></button><button onClick={() => onDelete(proj)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button></>
                                         )}
                                     </div>
                                 ))}
@@ -157,8 +138,223 @@
             );
         };
 
-        // --- Sub-Views ---
+        // --- Staff Manager Modal ---
+        const StaffManagerModal = ({ isOpen, onClose, staff, setStaff }) => {
+            const [form, setForm] = useState({ name: '', role: '', rate: '' });
+            const [editingId, setEditingId] = useState(null);
 
+            if (!isOpen) return null;
+
+            const handleSave = (e) => {
+                e.preventDefault();
+                if (!form.name || !form.rate) return;
+                
+                if (editingId) {
+                    setStaff(prev => prev.map(s => s.id === editingId ? { ...s, ...form } : s));
+                    setEditingId(null);
+                } else {
+                    setStaff(prev => [...prev, { id: Date.now(), ...form }]);
+                }
+                setForm({ name: '', role: '', rate: '' });
+            };
+
+            const handleEdit = (s) => {
+                setForm({ name: s.name, role: s.role, rate: s.rate });
+                setEditingId(s.id);
+            };
+
+            const handleDelete = (id) => {
+                if (confirm('Delete this staff member?')) setStaff(prev => prev.filter(s => s.id !== id));
+            };
+
+            const cancelEdit = () => {
+                setEditingId(null);
+                setForm({ name: '', role: '', rate: '' });
+            }
+
+            return (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50"><h3 className="font-bold text-slate-800 flex items-center gap-2"><Users size={18}/> Manage Staff (ஊழியர்கள்)</h3><button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={20}/></button></div>
+                        <div className="p-4">
+                            <form onSubmit={handleSave} className="grid grid-cols-1 sm:grid-cols-7 gap-2 mb-6 bg-slate-50 p-3 rounded-lg border">
+                                <input placeholder="Name (பெயர்)" className="p-2 border rounded text-sm sm:col-span-2" value={form.name} onChange={e => setForm({...form, name: e.target.value})} required />
+                                <input placeholder="Role (வேலை)" className="p-2 border rounded text-sm sm:col-span-2" value={form.role} onChange={e => setForm({...form, role: e.target.value})} />
+                                <input type="number" placeholder="Rate (₹/hr)" className="p-2 border rounded text-sm sm:col-span-2" value={form.rate} onChange={e => setForm({...form, rate: e.target.value})} required />
+                                <div className="sm:col-span-1 flex flex-col gap-1">
+                                    <button className="bg-indigo-600 text-white p-2 rounded text-sm font-bold h-full">{editingId ? 'Save' : 'Add'}</button>
+                                    {editingId && <button type="button" onClick={cancelEdit} className="bg-gray-300 text-gray-700 p-1 rounded text-xs">Cancel</button>}
+                                </div>
+                            </form>
+                            <div className="max-h-[50vh] overflow-y-auto space-y-2 custom-scrollbar">
+                                {staff.map(s => (
+                                    <div key={s.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50">
+                                        <div>
+                                            <div className="font-bold text-slate-800">{s.name}</div>
+                                            <div className="text-xs text-slate-500">{s.role} • ₹{s.rate}/hr</div>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button onClick={() => handleEdit(s)} className="text-blue-500 p-1 hover:bg-blue-100 rounded"><Edit2 size={16}/></button>
+                                            <button onClick={() => handleDelete(s.id)} className="text-rose-500 p-1 hover:bg-rose-100 rounded"><Trash2 size={16}/></button>
+                                        </div>
+                                    </div>
+                                ))}
+                                {staff.length === 0 && <p className="text-center text-slate-400 py-4">No staff added yet.</p>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Attendance View ---
+        const AttendanceView = ({ staff, setStaff, attendance, setAttendance }) => {
+            const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
+            const [entry, setEntry] = useState({ date: new Date().toISOString().split('T')[0], staffId: '', hours: '' });
+            const [editingId, setEditingId] = useState(null);
+
+            const handleSave = (e) => {
+                e.preventDefault();
+                const selectedStaff = staff.find(s => s.id === parseInt(entry.staffId));
+                if (!selectedStaff || !entry.hours) return;
+
+                const totalPay = parseFloat(entry.hours) * parseFloat(selectedStaff.rate);
+                const record = { 
+                    id: editingId || Date.now(), 
+                    date: entry.date, 
+                    staffId: selectedStaff.id, 
+                    staffName: selectedStaff.name, 
+                    role: selectedStaff.role,
+                    hourlyRate: selectedStaff.rate,
+                    hours: parseFloat(entry.hours), 
+                    totalPay: totalPay 
+                };
+
+                if (editingId) {
+                    setAttendance(prev => prev.map(a => a.id === editingId ? record : a));
+                    setEditingId(null);
+                } else {
+                    setAttendance(prev => [record, ...prev]);
+                }
+                setEntry(prev => ({ ...prev, staffId: '', hours: '' }));
+            };
+
+            const handleEdit = (rec) => {
+                setEntry({ date: rec.date, staffId: rec.staffId, hours: rec.hours });
+                setEditingId(rec.id);
+                window.scrollTo({top:0, behavior:'smooth'});
+            };
+
+            const handleDelete = (id) => {
+                if (confirm('Delete this attendance record?')) setAttendance(prev => prev.filter(a => a.id !== id));
+            };
+
+            const selectedStaff = staff.find(s => s.id === parseInt(entry.staffId));
+
+            const exportAttendance = () => {
+                const data = attendance.map(a => ({
+                    "Date": a.date,
+                    "Staff Name": a.staffName,
+                    "Role": a.role,
+                    "Hourly Rate": a.hourlyRate,
+                    "Hours Worked": a.hours,
+                    "Total Pay (INR)": a.totalPay
+                }));
+                const ws = XLSX.utils.json_to_sheet(data);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Attendance");
+                XLSX.writeFile(wb, `Attendance_${new Date().toISOString().split('T')[0]}.xlsx`);
+            };
+
+            return (
+                <div className="space-y-6 animate-in">
+                    <Card>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-bold text-lg flex items-center gap-2"><Clock size={20} className="text-indigo-600"/> Daily Attendance (வருகை பதிவு)</h3>
+                        </div>
+
+                        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Date</label>
+                                <input type="date" value={entry.date} onChange={e => setEntry({...entry, date: e.target.value})} className="w-full p-2 border rounded-lg text-sm" required />
+                            </div>
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Select Staff</label>
+                                <div className="flex gap-2">
+                                    <select value={entry.staffId} onChange={e => setEntry({...entry, staffId: e.target.value})} className="w-full p-2 border rounded-lg text-sm" required>
+                                        <option value="">Choose Staff...</option>
+                                        {staff.map(s => <option key={s.id} value={s.id}>{s.name} ({s.role})</option>)}
+                                    </select>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setIsStaffModalOpen(true)} 
+                                        className="p-2 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300 flex-shrink-0" 
+                                        title="Manage Staff"
+                                    >
+                                        <Settings size={20}/>
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Hours Worked</label>
+                                <input type="number" step="0.5" value={entry.hours} onChange={e => setEntry({...entry, hours: e.target.value})} className="w-full p-2 border rounded-lg text-sm" placeholder="Ex: 8" required />
+                            </div>
+                            <div className="md:col-span-1">
+                                {selectedStaff && entry.hours && (
+                                    <div className="text-right mb-2 text-xs text-slate-500">
+                                        {entry.hours} hrs x ₹{selectedStaff.rate} = <span className="font-bold text-green-600 text-sm">₹{entry.hours * selectedStaff.rate}</span>
+                                    </div>
+                                )}
+                                <button className="w-full bg-indigo-600 text-white p-2 rounded-lg font-bold hover:bg-indigo-700 text-sm">{editingId ? 'Update Record' : 'Save Attendance'}</button>
+                            </div>
+                        </form>
+                    </Card>
+
+                    <Card>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-bold text-slate-700">Attendance Log</h3>
+                            <button onClick={exportAttendance} className="text-green-600 text-sm font-bold flex items-center gap-1 hover:underline"><Download size={14}/> Excel</button>
+                        </div>
+                        <div className="overflow-x-auto rounded-lg border border-slate-200 max-h-[500px] overflow-y-auto custom-scrollbar">
+                            <table className="w-full text-left bg-white text-sm">
+                                <thead className="bg-slate-100 text-slate-600 sticky top-0">
+                                    <tr>
+                                        <th className="p-3">Date</th>
+                                        <th className="p-3">Staff</th>
+                                        <th className="p-3 text-right">Hours</th>
+                                        <th className="p-3 text-right">Rate</th>
+                                        <th className="p-3 text-right">Total Pay</th>
+                                        <th className="p-3 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {attendance.map(rec => (
+                                        <tr key={rec.id} className="hover:bg-slate-50">
+                                            <td className="p-3 whitespace-nowrap">{rec.date}</td>
+                                            <td className="p-3">
+                                                <div className="font-bold">{rec.staffName}</div>
+                                                <div className="text-xs text-slate-500">{rec.role}</div>
+                                            </td>
+                                            <td className="p-3 text-right">{rec.hours}</td>
+                                            <td className="p-3 text-right text-xs text-slate-500">₹{rec.hourlyRate}/hr</td>
+                                            <td className="p-3 text-right font-bold text-indigo-600">₹{rec.totalPay}</td>
+                                            <td className="p-3 text-center flex justify-center gap-2">
+                                                <button onClick={() => handleEdit(rec)} className="text-blue-500 hover:bg-blue-100 p-1 rounded"><Edit2 size={16}/></button>
+                                                <button onClick={() => handleDelete(rec.id)} className="text-rose-500 hover:bg-rose-100 p-1 rounded"><Trash2 size={16}/></button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {attendance.length === 0 && <tr><td colSpan="6" className="p-6 text-center text-slate-400">No attendance records found.</td></tr>}
+                                </tbody>
+                            </table>
+                        </div>
+                    </Card>
+                    <StaffManagerModal isOpen={isStaffModalOpen} onClose={() => setIsStaffModalOpen(false)} staff={staff} setStaff={setStaff} />
+                </div>
+            );
+        };
+
+        // --- Sub-Views (Dashboard, Entry, Reports) ---
         const DashboardView = ({ totalIncome, totalExpense, balance, transactions, setActiveTab, handleEdit, handleDelete }) => (
             <div className="space-y-6 animate-in">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -197,19 +393,8 @@
 
         const EntryFormView = ({ formData, setFormData, formType, setFormType, editingId, cancelEdit, handleSubmit, handleInputChange, projects, openProjectManager, formResetKey }) => {
             const [isManualInput, setIsManualInput] = useState(false);
-
-            // Reset manual mode when form resets (new entry or cancel)
-            useEffect(() => {
-                setIsManualInput(false);
-            }, [formResetKey]);
-
-            // When editing an entry, determine mode based on whether project exists in list
-            useEffect(() => {
-                if (editingId && formData.projectName) {
-                    const isKnown = projects.includes(formData.projectName);
-                    setIsManualInput(!isKnown);
-                }
-            }, [editingId, formData.projectName, projects]);
+            useEffect(() => { setIsManualInput(false); }, [formResetKey]);
+            useEffect(() => { if (editingId && formData.projectName) { const isKnown = projects.includes(formData.projectName); setIsManualInput(!isKnown); } }, [editingId, formData.projectName, projects]);
 
             return (
                 <div className="max-w-4xl mx-auto space-y-6 animate-in">
@@ -223,62 +408,22 @@
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
                                     <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Project Name *</label>
-                                    
                                     {isManualInput ? (
                                         <div className="flex gap-2">
-                                            <input 
-                                                type="text" 
-                                                name="projectName" 
-                                                value={formData.projectName} 
-                                                onChange={handleInputChange} 
-                                                className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                                placeholder="Type New Project Name..." 
-                                                required 
-                                                autoFocus
-                                            />
-                                            <button 
-                                                type="button" 
-                                                onClick={() => { setIsManualInput(false); setFormData(p => ({...p, projectName: projects[0] || ''})) }} 
-                                                className="p-3 text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-lg border border-rose-200"
-                                                title="Cancel Manual Input"
-                                            >
-                                                <X size={20} />
-                                            </button>
+                                            <input type="text" name="projectName" value={formData.projectName} onChange={handleInputChange} className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Type New Project Name..." required autoFocus />
+                                            <button type="button" onClick={() => { setIsManualInput(false); setFormData(p => ({...p, projectName: projects[0] || ''})) }} className="p-3 text-rose-500 bg-rose-50 hover:bg-rose-100 rounded-lg border border-rose-200" title="Cancel Manual Input"><X size={20} /></button>
                                         </div>
                                     ) : (
                                         <div className="flex gap-2">
-                                            <select 
-                                                name="projectName" 
-                                                value={formData.projectName} 
-                                                onChange={(e) => {
-                                                    if (e.target.value === '__NEW__') {
-                                                        setIsManualInput(true);
-                                                        setFormData(p => ({...p, projectName: ''}));
-                                                    } else {
-                                                        handleInputChange(e);
-                                                    }
-                                                }} 
-                                                className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" 
-                                                required
-                                            >
+                                            <select name="projectName" value={formData.projectName} onChange={(e) => { if (e.target.value === '__NEW__') { setIsManualInput(true); setFormData(p => ({...p, projectName: ''})); } else { handleInputChange(e); } }} className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required>
                                                 {projects.map(p => <option key={p} value={p}>{p}</option>)}
                                                 <option value="__NEW__" className="font-bold text-blue-600">+ Type New Project...</option>
                                             </select>
-                                            <button 
-                                                type="button" 
-                                                onClick={openProjectManager} 
-                                                className="p-3 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300" 
-                                                title="Manage Projects"
-                                            >
-                                                <Settings size={20}/>
-                                            </button>
+                                            <button type="button" onClick={openProjectManager} className="p-3 bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300" title="Manage Projects"><Settings size={20}/></button>
                                         </div>
                                     )}
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Date *</label>
-                                    <input type="date" name="date" value={formData.date} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required />
-                                </div>
+                                <div><label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Date *</label><input type="date" name="date" value={formData.date} onChange={handleInputChange} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" required /></div>
                             </div>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -323,45 +468,20 @@
         const ReportsView = ({ transactions, projects, totalExpense, handleDelete, handleEdit }) => {
             const [searchTerm, setSearchTerm] = useState('');
             const [filterProject, setFilterProject] = useState('All');
-
             const filteredTransactions = transactions.filter(t => {
                 const matchesSearch = t.category.toLowerCase().includes(searchTerm.toLowerCase()) || t.vendor.toLowerCase().includes(searchTerm.toLowerCase()) || (t.subCategory && t.subCategory.toLowerCase().includes(searchTerm.toLowerCase()));
                 const matchesProject = filterProject === 'All' || t.projectName === filterProject;
                 return matchesSearch && matchesProject;
             });
-
             const sortedExpenses = Object.entries(transactions.filter(t => t.type === 'expense').reduce((acc, curr) => {
                 acc[curr.category] = (acc[curr.category] || 0) + parseFloat(curr.amount);
                 return acc;
             }, {})).sort((a, b) => b[1] - a[1]);
-
-            // --- Export to Excel Function ---
             const exportToExcel = () => {
-                // 1. Prepare data
                 const dataToExport = filteredTransactions.map(t => ({
-                    "Date": t.date,
-                    "Project Name": t.projectName,
-                    "Type": t.type === 'income' ? 'Income' : 'Expense',
-                    "Category": t.category,
-                    "Sub-Category": t.subCategory || '-',
-                    "Vendor/Party": t.vendor || '-',
-                    "Bill No": t.billNo || '-',
-                    "Payment Mode": t.paymentMode,
-                    "Status": t.paymentStatus,
-                    "Amount (INR)": parseFloat(t.amount),
-                    "Notes": t.notes || '-'
+                    "Date": t.date, "Project Name": t.projectName, "Type": t.type === 'income' ? 'Income' : 'Expense', "Category": t.category, "Sub-Category": t.subCategory || '-', "Vendor/Party": t.vendor || '-', "Bill No": t.billNo || '-', "Payment Mode": t.paymentMode, "Status": t.paymentStatus, "Amount (INR)": parseFloat(t.amount), "Notes": t.notes || '-'
                 }));
-
-                // 2. Create Sheet
-                const ws = XLSX.utils.json_to_sheet(dataToExport);
-                
-                // 3. Create Workbook
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Transactions");
-
-                // 4. Download
-                const fileName = `Construction_Tracker_${new Date().toISOString().split('T')[0]}.xlsx`;
-                XLSX.writeFile(wb, fileName);
+                const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Transactions"); XLSX.writeFile(wb, `Construction_Tracker_${new Date().toISOString().split('T')[0]}.xlsx`);
             };
 
             return (
@@ -375,14 +495,7 @@
                         <Card><h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3"><PieChart size={20} className="text-rose-500"/> Expense Breakdown</h3><div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">{sortedExpenses.map(([c,a])=><div key={c}><div className="flex justify-between text-sm mb-1"><span>{c}</span><span className="font-bold">₹ {a.toLocaleString()}</span></div><div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-rose-500 h-full rounded-full" style={{width:`${(a/totalExpense)*100}%`}}></div></div></div>)}</div></Card>
                     </div>
                     <Card>
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-                            <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><FileText size={20} className="text-indigo-500"/> Transaction Ledger</h3>
-                            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                                <button onClick={exportToExcel} className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 shadow-sm"><Download size={16}/> Download Excel</button>
-                                <div className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><input type="text" placeholder="Search..." value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 w-full"/></div>
-                                <div className="relative"><Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><select value={filterProject} onChange={(e)=>setFilterProject(e.target.value)} className="pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 appearance-none w-full"><option value="All">All Projects</option>{projects.map(p=><option key={p} value={p}>{p}</option>)}</select></div>
-                            </div>
-                        </div>
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"><h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><FileText size={20} className="text-indigo-500"/> Transaction Ledger</h3><div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"><button onClick={exportToExcel} className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 shadow-sm"><Download size={16}/> Download Excel</button><div className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><input type="text" placeholder="Search..." value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 w-full"/></div><div className="relative"><Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><select value={filterProject} onChange={(e)=>setFilterProject(e.target.value)} className="pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 appearance-none w-full"><option value="All">All Projects</option>{projects.map(p=><option key={p} value={p}>{p}</option>)}</select></div></div></div>
                         <div className="overflow-x-auto rounded-lg border border-slate-200">
                             <table className="w-full text-left border-collapse bg-white">
                                 <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-4">Date</th><th className="p-4">Details</th><th className="p-4">Party</th><th className="p-4 text-right">Amount</th><th className="p-4 text-center">Status</th><th className="p-4 text-center">Actions</th></tr></thead>
@@ -396,131 +509,86 @@
 
         // --- Main App ---
         function App() {
+            const [isAuthenticated, setIsAuthenticated] = useState(() => sessionStorage.getItem('auth_token') === 'valid');
             const [activeTab, setActiveTab] = useState('dashboard');
             const [transactions, setTransactions] = useState([]);
             const [projects, setProjects] = useState(['Main Project']);
+            const [staff, setStaff] = useState([]);
+            const [attendance, setAttendance] = useState([]);
+            
             const [editingId, setEditingId] = useState(null);
             const [formType, setFormType] = useState('expense');
             const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
             const [formData, setFormData] = useState({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' });
             const [formResetKey, setFormResetKey] = useState(0);
 
-            // Load Data
+            const handleLogin = () => { setIsAuthenticated(true); sessionStorage.setItem('auth_token', 'valid'); };
+
             useEffect(() => {
                 const savedData = localStorage.getItem('construction_tracker_data');
                 const savedProjects = localStorage.getItem('construction_tracker_projects');
+                const savedStaff = localStorage.getItem('construction_tracker_staff');
+                const savedAttendance = localStorage.getItem('construction_tracker_attendance');
                 if (savedData) setTransactions(JSON.parse(savedData));
                 if (savedProjects) setProjects(JSON.parse(savedProjects));
+                if (savedStaff) setStaff(JSON.parse(savedStaff));
+                if (savedAttendance) setAttendance(JSON.parse(savedAttendance));
             }, []);
 
-            // Save Data
-            useEffect(() => {
-                localStorage.setItem('construction_tracker_data', JSON.stringify(transactions));
-            }, [transactions]);
-
-            useEffect(() => {
-                localStorage.setItem('construction_tracker_projects', JSON.stringify(projects));
-            }, [projects]);
+            useEffect(() => { localStorage.setItem('construction_tracker_data', JSON.stringify(transactions)); }, [transactions]);
+            useEffect(() => { localStorage.setItem('construction_tracker_projects', JSON.stringify(projects)); }, [projects]);
+            useEffect(() => { localStorage.setItem('construction_tracker_staff', JSON.stringify(staff)); }, [staff]);
+            useEffect(() => { localStorage.setItem('construction_tracker_attendance', JSON.stringify(attendance)); }, [attendance]);
 
             const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount || 0), 0);
             const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount || 0), 0);
             const balance = totalIncome - totalExpense;
 
             const handleInputChange = (e) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, [name]: value })); };
-
-            const handleEdit = (t) => {
-                setEditingId(t.id); setFormType(t.type);
-                setFormData({ date: t.date, projectName: t.projectName, category: t.category, subCategory: t.subCategory || '', amount: t.amount, vendor: t.vendor || '', billNo: t.billNo || '', paymentMode: t.paymentMode, paymentStatus: t.paymentStatus, notes: t.notes || '' });
-                setActiveTab('entry'); window.scrollTo({ top: 0, behavior: 'smooth' });
-            };
-
-            const cancelEdit = () => {
-                setEditingId(null);
-                setFormData({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' });
-                setFormResetKey(prev => prev + 1);
-            };
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                if (!formData.amount || !formData.category) return;
-                const newTransaction = { id: editingId || Date.now().toString(), type: formType, ...formData, amount: parseFloat(formData.amount) };
-                if (editingId) { setTransactions(prev => prev.map(t => t.id === editingId ? newTransaction : t)); alert("Entry Updated Successfully!"); }
-                else { setTransactions([newTransaction, ...transactions]); alert("Entry Added Successfully!"); }
-                
-                // Add project if new
-                if (!projects.includes(formData.projectName)) { setProjects(prev => [...prev, formData.projectName]); }
-                
-                setEditingId(null);
-                setFormData(prev => ({ ...prev, category: '', subCategory: '', amount: '', vendor: '', billNo: '', notes: '' }));
-                setFormResetKey(prev => prev + 1);
-            };
-
+            const handleEdit = (t) => { setEditingId(t.id); setFormType(t.type); setFormData({ date: t.date, projectName: t.projectName, category: t.category, subCategory: t.subCategory || '', amount: t.amount, vendor: t.vendor || '', billNo: t.billNo || '', paymentMode: t.paymentMode, paymentStatus: t.paymentStatus, notes: t.notes || '' }); setActiveTab('entry'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            const cancelEdit = () => { setEditingId(null); setFormData({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' }); setFormResetKey(prev => prev + 1); };
+            const handleSubmit = (e) => { e.preventDefault(); if (!formData.amount || !formData.category) return; const newTransaction = { id: editingId || Date.now().toString(), type: formType, ...formData, amount: parseFloat(formData.amount) }; if (editingId) { setTransactions(prev => prev.map(t => t.id === editingId ? newTransaction : t)); alert("Entry Updated Successfully!"); } else { setTransactions([newTransaction, ...transactions]); alert("Entry Added Successfully!"); if (!projects.includes(formData.projectName)) { setProjects(prev => [...prev, formData.projectName]); } } setEditingId(null); setFormData(prev => ({ ...prev, category: '', subCategory: '', amount: '', vendor: '', billNo: '', notes: '' })); setFormResetKey(prev => prev + 1); };
             const handleDelete = (id) => { if (confirm("Delete this entry?")) setTransactions(transactions.filter(t => t.id !== id)); };
 
-            // Project Manager Functions
-            const handleAddProject = (name) => {
-                if(!projects.includes(name)) setProjects([...projects, name]);
-            };
+            const handleAddProject = (name) => { if(!projects.includes(name)) setProjects([...projects, name]); };
+            const handleRenameProject = (oldName, newName) => { if(projects.includes(newName)) { alert("Project name already exists!"); return; } setProjects(projects.map(p => p === oldName ? newName : p)); setTransactions(transactions.map(t => t.projectName === oldName ? { ...t, projectName: newName } : t)); if(formData.projectName === oldName) setFormData({...formData, projectName: newName}); };
+            const handleDeleteProject = (name) => { if(confirm(`Delete project "${name}"?`)){ setProjects(projects.filter(p => p !== name)); } };
 
-            const handleRenameProject = (oldName, newName) => {
-                if(projects.includes(newName)) { alert("Project name already exists!"); return; }
-                // Update List
-                setProjects(projects.map(p => p === oldName ? newName : p));
-                // Update Transactions History
-                setTransactions(transactions.map(t => t.projectName === oldName ? { ...t, projectName: newName } : t));
-                // Update Current Form if needed
-                if(formData.projectName === oldName) setFormData({...formData, projectName: newName});
-            };
-
-            const handleDeleteProject = (name) => {
-                if(confirm(`Delete project "${name}"? Transactions associated with this project will NOT be deleted, but the name will be removed from the list.`)){
-                    setProjects(projects.filter(p => p !== name));
-                }
-            };
+            if (!isAuthenticated) return <LoginScreen onLogin={handleLogin} />;
 
             return (
                 <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20 md:pb-0">
-                    <header className="bg-white border-b border-slate-200 sticky top-0 z-20">
-                        <div className="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center">
-                            <div className="flex items-center gap-3"><div className="bg-indigo-600 p-2 rounded-lg text-white"><Building2 size={24}/></div><div><h1 className="text-lg font-bold text-slate-800 leading-tight">Construction Manager</h1><p className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Finance Tracker</p></div></div>
-                            <div className="text-right hidden sm:block"><div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Balance</div><div className={`font-bold text-xl ${balance >= 0 ? 'text-indigo-600' : 'text-rose-600'}`}>₹ {balance.toLocaleString('en-IN')}</div></div>
-                        </div>
-                    </header>
+                    <header className="bg-white border-b border-slate-200 sticky top-0 z-20"><div className="max-w-6xl mx-auto px-4 h-16 flex justify-between items-center"><div className="flex items-center gap-3"><div className="bg-indigo-600 p-2 rounded-lg text-white"><Building2 size={24}/></div><div><h1 className="text-lg font-bold text-slate-800 leading-tight">Construction Manager</h1><p className="text-[10px] text-slate-500 font-medium tracking-wide uppercase">Finance Tracker</p></div></div><div className="text-right hidden sm:block"><div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Net Balance</div><div className={`font-bold text-xl ${balance >= 0 ? 'text-indigo-600' : 'text-rose-600'}`}>₹ {balance.toLocaleString('en-IN')}</div></div></div></header>
 
                     <main className="max-w-6xl mx-auto p-4 md:p-8">
                         <div className="hidden md:flex justify-center mb-8 bg-white p-1.5 rounded-xl shadow-sm border border-slate-200 w-fit mx-auto">
-                            {['dashboard', 'entry', 'reports'].map(tab => (
-                                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-8 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${activeTab === tab ? 'bg-slate-800 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                            {['dashboard', 'attendance', 'entry', 'reports'].map(tab => (
+                                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-2.5 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${activeTab === tab ? 'bg-slate-800 text-white shadow-md' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
                                     {tab === 'dashboard' && <LayoutDashboard size={18}/>}
+                                    {tab === 'attendance' && <Clock size={18}/>}
                                     {tab === 'entry' && <Plus size={18}/>}
                                     {tab === 'reports' && <FileText size={18}/>}
-                                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                    {tab === 'attendance' ? 'Attendance' : tab.charAt(0).toUpperCase() + tab.slice(1)}
                                 </button>
                             ))}
                         </div>
 
                         {activeTab === 'dashboard' && <DashboardView totalIncome={totalIncome} totalExpense={totalExpense} balance={balance} transactions={transactions} setActiveTab={setActiveTab} handleEdit={handleEdit} handleDelete={handleDelete}/>}
+                        {activeTab === 'attendance' && <AttendanceView staff={staff} setStaff={setStaff} attendance={attendance} setAttendance={setAttendance} />}
                         {activeTab === 'entry' && <EntryFormView formData={formData} setFormData={setFormData} formType={formType} setFormType={setFormType} editingId={editingId} cancelEdit={cancelEdit} handleSubmit={handleSubmit} handleInputChange={handleInputChange} projects={projects} openProjectManager={() => setIsProjectManagerOpen(true)} formResetKey={formResetKey} />}
                         {activeTab === 'reports' && <ReportsView transactions={transactions} projects={projects} totalExpense={totalExpense} handleDelete={handleDelete} handleEdit={handleEdit}/>}
                     </main>
 
-                    {/* Mobile Nav */}
                     <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 md:hidden z-30 pb-safe">
                         <div className="flex justify-around items-center h-16">
-                            <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'dashboard' ? 'text-indigo-600' : 'text-slate-400'}`}><LayoutDashboard size={20}/><span className="text-[10px] font-medium">Dashboard</span></button>
+                            <button onClick={() => setActiveTab('dashboard')} className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'dashboard' ? 'text-indigo-600' : 'text-slate-400'}`}><LayoutDashboard size={20}/><span className="text-[10px] font-medium">Home</span></button>
+                            <button onClick={() => setActiveTab('attendance')} className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'attendance' ? 'text-indigo-600' : 'text-slate-400'}`}><Clock size={20}/><span className="text-[10px] font-medium">Attend.</span></button>
                             <button onClick={() => setActiveTab('entry')} className="flex flex-col items-center justify-center -mt-6"><div className="bg-indigo-600 text-white p-4 rounded-full shadow-lg ring-4 ring-white"><Plus size={24}/></div></button>
                             <button onClick={() => setActiveTab('reports')} className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'reports' ? 'text-indigo-600' : 'text-slate-400'}`}><FileText size={20}/><span className="text-[10px] font-medium">Reports</span></button>
                         </div>
                     </nav>
 
-                    <ProjectManagerModal 
-                        isOpen={isProjectManagerOpen} 
-                        onClose={() => setIsProjectManagerOpen(false)}
-                        projects={projects}
-                        onRename={handleRenameProject}
-                        onDelete={handleDeleteProject}
-                        onAdd={handleAddProject}
-                    />
+                    <ProjectManagerModal isOpen={isProjectManagerOpen} onClose={() => setIsProjectManagerOpen(false)} projects={projects} onRename={handleRenameProject} onDelete={handleDeleteProject} onAdd={handleAddProject} />
                 </div>
             );
         }
@@ -530,3 +598,5 @@
     </script>
 </body>
 </html>
+
+
