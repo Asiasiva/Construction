@@ -57,15 +57,18 @@
         const Filter = (p) => <Icon {...p}><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></Icon>;
         const CheckCircle2 = (p) => <Icon {...p}><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></Icon>;
         const ArrowRight = (p) => <Icon {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></Icon>;
-        const Download = (p) => <Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></Icon>;
+        const Download = (p) => <Icon {...p}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-3-3v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></Icon>;
         const Settings = (p) => <Icon {...p}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l-.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></Icon>;
         const X = (p) => <Icon {...p}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></Icon>;
         const Lock = (p) => <Icon {...p}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></Icon>;
         const Users = (p) => <Icon {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></Icon>;
         const Clock = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
         const Tool = (p) => <Icon {...p}><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.71-3.71a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-3.71 3.71z"/><path d="M2.2 12.3a1 1 0 0 0 .28 1.18l7.8 7.8a1 1 0 0 0 1.18.28l8.72-8.72a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-8.72 8.72zM12 17l-3 3"/></Icon>;
+        const Handshake = (p) => <Icon {...p}><path d="m11 17 2 2 4-4"/><path d="M18 13c.83.67 1.79 1.44 3 2 0 2.72 2 4 2 4H1s-2-1.28-2-4c1.21-.56 2.17-1.33 3-2"/><path d="M18 13c-2.3-1.63-4.5-2-7-2-2.3 0-6.1.53-8.8 2"/></Icon>;
+        const ListChecks = (p) => <Icon {...p}><path d="m3 14 8 8 10-10"/><path d="M8 8h3"/><path d="M15 8h2"/><path d="M15 12h2"/></Icon>;
+        const Target = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></Icon>;
 
-        // --- Data Constants ---
+        // --- Data Constants (Unchanged) ---
         const INCOME_CATEGORIES = ["Advance Payment Received", "Stage-wise Payment Received", "Material Return Credits", "Other Income (Scrap sale etc.)"];
         const EXPENSE_CATEGORIES = {
             "Material Expenses": ["Cement", "Sand / M-Sand", "Bricks / Blocks", "Steel", "Stones / Aggregate", "Paint & Primer", "Tiles / Marble / Granite", "Electrical Items", "Plumbing Items", "Wood / Doors / Windows", "Glass / False ceiling", "Others"],
@@ -79,11 +82,13 @@
         const PAYMENT_MODES = ["Cash", "UPI", "Bank Transfer", "Cheque"];
         const PAYMENT_STATUS = ["Paid", "Pending", "Partial"];
         const LABOUR_JOB_NAMES = ["Mason", "Helper", "Carpenter", "Electrician", "Plumber", "Painter", "Fabricator", "Supervisor"];
+        const MATERIAL_UNITS = ["Nos", "Bags", "Cft", "Sqft", "Tons", "Kg", "Ltrs", "Rolls"]; // New Units Array
+        const LIABILITY_TYPES = ["Bank Loan", "Personal Loan", "Client Advance", "Vendor Credit"]; // New Liability Types
 
-        // --- Helper Components ---
+        // --- Helper Components (Unchanged) ---
         const Card = ({ children, className = "" }) => <div className={`bg-white rounded-xl shadow-sm border border-slate-200 p-5 ${className}`}>{children}</div>;
         const Badge = ({ children, type }) => {
-            const styles = { income: "bg-emerald-100 text-emerald-800", expense: "bg-rose-100 text-rose-800", neutral: "bg-slate-100 text-slate-700", pending: "bg-amber-100 text-amber-800", paid: "bg-emerald-50 text-emerald-700" };
+            const styles = { income: "bg-emerald-100 text-emerald-800", expense: "bg-rose-100 text-rose-800", neutral: "bg-slate-100 text-slate-700", pending: "bg-amber-100 text-amber-800", paid: "bg-emerald-50 text-emerald-700", loan: "bg-red-100 text-red-800", success: "bg-green-100 text-green-800" };
             return <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${styles[type] || styles.neutral}`}>{children}</span>;
         };
         const InputCell = ({ value, onChange, type = "number", min = "0", className = "", placeholder = "0" }) => (
@@ -110,32 +115,85 @@
             );
         };
 
-        // --- Project Manager Modal (Unchanged) ---
-        const ProjectManagerModal = ({ isOpen, onClose, projects, onRename, onDelete, onAdd }) => {
+        // --- Project Manager Modal (UPDATED FOR BUDGET) ---
+        const ProjectManagerModal = ({ isOpen, onClose, projects, projectBudgets, setProjectBudgets, onRename, onDelete, onAdd }) => {
             const [newProject, setNewProject] = useState("");
+            const [newBudget, setNewBudget] = useState("");
             const [editingIndex, setEditingIndex] = useState(null);
             const [editValue, setEditValue] = useState("");
+            const [editBudgetValue, setEditBudgetValue] = useState("");
+
             if (!isOpen) return null;
-            const handleAdd = () => { if(newProject.trim()){ onAdd(newProject.trim()); setNewProject(""); } };
-            const saveEdit = (index) => { if(editValue.trim() && editValue !== projects[index]){ onRename(projects[index], editValue.trim()); } setEditingIndex(null); };
+
+            const handleAdd = () => { 
+                if(newProject.trim()){ 
+                    onAdd(newProject.trim()); 
+                    setProjectBudgets(prev => ({...prev, [newProject.trim()]: parseFloat(newBudget) || 0}));
+                    setNewProject("");
+                    setNewBudget("");
+                } 
+            };
+            const saveEdit = (oldName) => { 
+                if(editValue.trim() && editValue !== oldName){ 
+                    onRename(oldName, editValue.trim()); 
+                } 
+                setProjectBudgets(prev => {
+                    const newBudgets = { ...prev };
+                    if (editValue.trim() !== oldName) {
+                        newBudgets[editValue.trim()] = newBudgets[oldName] || 0;
+                        delete newBudgets[oldName];
+                    }
+                    newBudgets[editValue.trim()] = parseFloat(editBudgetValue) || 0;
+                    return newBudgets;
+                });
+                setEditingIndex(null); 
+            };
+            
+            const startEdit = (proj, idx) => {
+                setEditingIndex(idx);
+                setEditValue(proj);
+                setEditBudgetValue(projectBudgets[proj] || 0);
+            };
+
 
             return (
                 <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden animate-in">
-                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50"><h3 className="font-bold text-slate-800 flex items-center gap-2"><Settings size={18}/> Manage Projects</h3><button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={20}/></button></div>
+                    <div className="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden animate-in">
+                        <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50"><h3 className="font-bold text-slate-800 flex items-center gap-2"><Settings size={18}/> Manage Projects & Budgets</h3><button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X size={20}/></button></div>
                         <div className="p-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
-                            <div className="flex gap-2 mb-4"><input type="text" value={newProject} onChange={(e) => setNewProject(e.target.value)} placeholder="Add New Project Name" className="flex-1 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none"/><button onClick={handleAdd} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700"><Plus size={20}/></button></div>
+                            <div className="flex gap-2 mb-4 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                                <input type="text" value={newProject} onChange={(e) => setNewProject(e.target.value)} placeholder="New Project Name" className="flex-1 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" required />
+                                <input type="number" value={newBudget} onChange={(e) => setNewBudget(e.target.value)} placeholder="Budget (₹)" className="w-24 p-2 border border-slate-300 rounded-lg text-sm text-right focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                <button onClick={handleAdd} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700"><Plus size={20}/></button>
+                            </div>
                             <div className="space-y-2">
+                                <div className="grid grid-cols-4 gap-2 text-xs font-bold text-slate-600 p-2 border-b">
+                                    <span className="col-span-2">Project Name</span>
+                                    <span className="text-right">Budget (₹)</span>
+                                    <span className="text-center">Action</span>
+                                </div>
                                 {projects.map((proj, idx) => (
-                                    <div key={idx} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                    <div key={idx} className="grid grid-cols-4 gap-2 items-center p-2 bg-slate-50 rounded-lg border border-slate-100">
                                         {editingIndex === idx ? (
-                                            <div className="flex-1 flex gap-2"><input type="text" value={editValue} onChange={(e) => setEditValue(e.target.value)} className="flex-1 p-1 border border-indigo-300 rounded text-sm" autoFocus /><button onClick={() => saveEdit(idx)} className="text-green-600"><CheckCircle2 size={18}/></button><button onClick={() => setEditingIndex(null)} className="text-slate-400"><X size={18}/></button></div>
+                                            <div className="col-span-4 flex gap-2">
+                                                <input type="text" value={editValue} onChange={(e) => setEditValue(e.target.value)} className="flex-1 p-1 border border-indigo-300 rounded text-sm" autoFocus />
+                                                <input type="number" value={editBudgetValue} onChange={(e) => setEditBudgetValue(e.target.value)} className="w-24 p-1 border border-indigo-300 rounded text-sm text-right" />
+                                                <button onClick={() => saveEdit(proj)} className="text-green-600"><CheckCircle2 size={18}/></button>
+                                                <button onClick={() => setEditingIndex(null)} className="text-slate-400"><X size={18}/></button>
+                                            </div>
                                         ) : (
-                                            <><span className="flex-1 text-sm font-medium text-slate-700 truncate">{proj}</span><button onClick={() => { setEditingIndex(idx); setEditValue(proj); }} className="text-blue-500 hover:bg-blue-100 p-1.5 rounded"><Edit2 size={16}/></button><button onClick={() => onDelete(proj)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button></>
+                                            <>
+                                                <span className="col-span-2 text-sm font-medium text-slate-700 truncate">{proj}</span>
+                                                <span className="text-sm font-bold text-right text-blue-600">₹ {(projectBudgets[proj] || 0).toLocaleString('en-IN')}</span>
+                                                <div className="flex justify-center gap-1">
+                                                    <button onClick={() => startEdit(proj, idx)} className="text-blue-500 hover:bg-blue-100 p-1.5 rounded"><Edit2 size={16}/></button>
+                                                    <button onClick={() => onDelete(proj)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button>
+                                                </div>
+                                            </>
                                         )}
                                     </div>
                                 ))}
-                                {projects.length === 0 && <p className="text-center text-slate-400 text-sm py-2">No projects added.</p>}
+                                {projects.length === 0 && <p className="text-center text-slate-400 text-sm py-2 col-span-4">No projects added.</p>}
                             </div>
                         </div>
                     </div>
@@ -212,7 +270,7 @@
             );
         };
 
-        // --- Attendance View (Unchanged - Export is already here) ---
+        // --- Attendance View (Unchanged) ---
         const AttendanceView = ({ staff, setStaff, attendance, setAttendance }) => {
             const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
             const [entry, setEntry] = useState({ date: new Date().toISOString().split('T')[0], staffId: '', inTime: '', outTime: '', hours: '' });
@@ -379,14 +437,194 @@
             );
         };
 
+        // --- Loans & Liabilities Management View (Unchanged) ---
+        const LoansAndLiabilitiesView = ({ liabilities, setLiabilities }) => {
+            const [form, setForm] = useState({ type: LIABILITY_TYPES[0], amount: '', dueDate: new Date().toISOString().split('T')[0], party: '', notes: '' });
+            const [editingId, setEditingId] = useState(null);
+
+            const handleFormChange = (e) => {
+                const { name, value } = e.target;
+                setForm(prev => ({ ...prev, [name]: value }));
+            };
+
+            const handleSave = (e) => {
+                e.preventDefault();
+                if (!form.amount || !form.party) return;
+
+                const newLiability = {
+                    id: editingId || Date.now(),
+                    ...form,
+                    amount: parseFloat(form.amount)
+                };
+
+                if (editingId) {
+                    setLiabilities(prev => prev.map(l => l.id === editingId ? newLiability : l));
+                } else {
+                    setLiabilities(prev => [newLiability, ...prev]);
+                }
+                setForm({ type: LIABILITY_TYPES[0], amount: '', dueDate: new Date().toISOString().split('T')[0], party: '', notes: '' });
+                setEditingId(null);
+            };
+
+            const handleDelete = (id) => {
+                if (window.confirm('Delete this liability entry?')) setLiabilities(prev => prev.filter(l => l.id !== id));
+            };
+
+            const totalLiability = liabilities.reduce((sum, l) => sum + l.amount, 0);
+
+            return (
+                <div className="space-y-6 animate-in">
+                    <Card>
+                        <h3 className="font-bold text-lg flex items-center gap-2 text-red-600 mb-4"><Handshake size={20}/> Loans & Liabilities (கடன்கள் & பொறுப்புகள்)</h3>
+                        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end bg-red-50 p-4 rounded-xl border border-red-200">
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Type</label>
+                                <select name="type" value={form.type} onChange={handleFormChange} className="w-full p-2 border rounded-lg text-sm bg-white">
+                                    {LIABILITY_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                                </select>
+                            </div>
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Party/Bank</label>
+                                <input type="text" name="party" value={form.party} onChange={handleFormChange} placeholder="Bank Name / Vendor" className="w-full p-2 border rounded-lg text-sm" required/>
+                            </div>
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Amount (₹)</label>
+                                <input type="number" name="amount" value={form.amount} onChange={handleFormChange} placeholder="0.00" className="w-full p-2 border rounded-lg text-sm text-right" required/>
+                            </div>
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Due Date</label>
+                                <input type="date" name="dueDate" value={form.dueDate} onChange={handleFormChange} className="w-full p-2 border rounded-lg text-sm" />
+                            </div>
+                            <button type="submit" className="md:col-span-1 bg-red-600 text-white p-2 rounded-lg font-bold hover:bg-red-700 text-sm">{editingId ? 'Update' : 'Add Liability'}</button>
+                        </form>
+                    </Card>
+
+                    <Card>
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-bold text-slate-700">Liability Log</h3>
+                            <div className="text-right"><p className="text-xs text-slate-500">Total Outstanding:</p><p className="font-bold text-xl text-red-600">₹ {totalLiability.toLocaleString('en-IN')}</p></div>
+                        </div>
+                        <div className="overflow-x-auto rounded-lg border border-slate-200">
+                            <table className="w-full text-left bg-white text-sm">
+                                <thead className="bg-slate-100 text-slate-600 sticky top-0">
+                                    <tr>
+                                        <th className="p-3">Type</th>
+                                        <th className="p-3">Party/Bank</th>
+                                        <th className="p-3 text-right">Amount (₹)</th>
+                                        <th className="p-3">Due Date</th>
+                                        <th className="p-3 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-slate-100">
+                                    {liabilities.map(l => (
+                                        <tr key={l.id} className="hover:bg-slate-50">
+                                            <td className="p-3"><Badge type="loan">{l.type}</Badge></td>
+                                            <td className="p-3 font-medium text-slate-800">{l.party}</td>
+                                            <td className="p-3 text-right font-bold text-red-600">₹{l.amount.toLocaleString('en-IN')}</td>
+                                            <td className="p-3 text-xs">{l.dueDate}</td>
+                                            <td className="p-3 text-center"><button onClick={() => handleDelete(l.id)} className="text-rose-500 hover:bg-rose-100 p-1 rounded"><Trash2 size={16}/></button></td>
+                                        </tr>
+                                    ))}
+                                    {liabilities.length === 0 && <tr><td colSpan="5" className="p-6 text-center text-slate-400">No liability records found.</td></tr>}
+                                </tbody>
+                            </table>
+                        </div>
+                    </Card>
+                </div>
+            );
+        };
+
+
         // --- Site Management Sub-Components ---
 
-        // Section A: Material Stock Management
+        // Milestones and Requirements Table (Unchanged)
+        const MilestonesAndRequirements = ({ milestones, setMilestones, materials }) => {
+            const [newMilestone, setNewMilestone] = useState({ name: '', startDate: new Date().toISOString().split('T')[0], endDate: '', materialRequired: '', unit: MATERIAL_UNITS[0], quantity: 0 });
+            
+            const handleSave = (e) => {
+                e.preventDefault();
+                if (!newMilestone.name || !newMilestone.endDate) return;
+
+                const milestone = { id: Date.now(), ...newMilestone, quantity: parseFloat(newMilestone.quantity || 0) };
+                setMilestones(prev => [milestone, ...prev]);
+                setNewMilestone({ name: '', startDate: new Date().toISOString().split('T')[0], endDate: '', materialRequired: '', unit: MATERIAL_UNITS[0], quantity: 0 });
+            };
+
+            const handleDelete = (id) => {
+                if (window.confirm('Delete this milestone?')) setMilestones(prev => prev.filter(m => m.id !== id));
+            };
+
+            const getStockStatus = (materialName, requiredQuantity) => {
+                const material = materials.find(m => m.name === materialName);
+                if (!material) return { status: 'Not Tracked', color: 'text-slate-500' };
+
+                const closingStock = material.opening + material.receipt - material.transfer;
+                const remaining = closingStock - requiredQuantity;
+
+                if (remaining >= 0) return { status: 'In Stock', color: 'text-emerald-600' };
+                if (remaining < 0) return { status: `Short: ${Math.abs(remaining).toFixed(1)}`, color: 'text-rose-600' };
+                return { status: 'N/A', color: 'text-slate-500' };
+            };
+
+            return (
+                <Card className="col-span-full space-y-4">
+                    <h3 className="font-bold text-lg flex items-center gap-2 text-indigo-700"><ListChecks size={20}/> 5. Project Milestones & Requirements (திட்ட மைல்கற்கள்)</h3>
+
+                    <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-6 gap-3 p-3 bg-indigo-50 rounded-lg border border-indigo-200">
+                        <input type="text" name="name" value={newMilestone.name} onChange={(e) => setNewMilestone({...newMilestone, name: e.target.value})} placeholder="Milestone Name (e.g., Roof Slab Casting)" className="col-span-2 p-2 border rounded-lg text-sm" required />
+                        <input type="date" name="endDate" value={newMilestone.endDate} onChange={(e) => setNewMilestone({...newMilestone, endDate: e.target.value})} className="col-span-1 p-2 border rounded-lg text-sm" required />
+                        <div className="col-span-2 flex gap-2">
+                            <input type="text" name="materialRequired" value={newMilestone.materialRequired} onChange={(e) => setNewMilestone({...newMilestone, materialRequired: e.target.value})} placeholder="Required Material (e.g., Cement)" className="flex-1 p-2 border rounded-lg text-sm" />
+                            <select name="unit" value={newMilestone.unit} onChange={(e) => setNewMilestone({...newMilestone, unit: e.target.value})} className="w-16 p-2 border rounded-lg text-sm">
+                                {MATERIAL_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                            </select>
+                            <input type="number" name="quantity" value={newMilestone.quantity} onChange={(e) => setNewMilestone({...newMilestone, quantity: e.target.value})} placeholder="Qty" className="w-16 p-2 border rounded-lg text-sm text-right" />
+                        </div>
+                        <button type="submit" className="col-span-1 bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 font-medium text-sm">Add</button>
+                    </form>
+
+                    <div className="overflow-x-auto rounded-lg border border-slate-200">
+                        <table className="w-full text-left bg-white text-sm">
+                            <thead className="bg-slate-100 text-slate-600 sticky top-0">
+                                <tr>
+                                    <th className="p-3 w-[25%]">Milestone</th>
+                                    <th className="p-3">Timeline</th>
+                                    <th className="p-3">Required Material</th>
+                                    <th className="p-3 text-center">Stock Status</th>
+                                    <th className="p-3 text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                                {milestones.map(m => {
+                                    const status = getStockStatus(m.materialRequired, m.quantity);
+                                    return (
+                                        <tr key={m.id} className="hover:bg-slate-50">
+                                            <td className="p-3 font-semibold text-slate-800">{m.name}</td>
+                                            <td className="p-3 text-xs text-slate-600">{m.startDate} to {m.endDate}</td>
+                                            <td className="p-3 text-xs text-indigo-600 font-medium">{m.quantity} {m.unit} of {m.materialRequired}</td>
+                                            <td className="p-3 text-center"><Badge type={status.color.includes('rose') ? 'loan' : 'success'}>{status.status}</Badge></td>
+                                            <td className="p-3 text-center"><button onClick={() => handleDelete(m.id)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button></td>
+                                        </tr>
+                                    );
+                                })}
+                                {milestones.length === 0 && <tr><td colSpan="5" className="p-6 text-center text-slate-400">No milestones set.</td></tr>}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card>
+            );
+        };
+
+        // Section A: Material Stock Management (With Edit)
         const MaterialStockTable = ({ materials, setMaterials }) => {
             const [newItemName, setNewItemName] = useState('');
+            const [newItemUnit, setNewItemUnit] = useState(MATERIAL_UNITS[0]); 
+            const [editingId, setEditingId] = useState(null); 
+            const [editName, setEditName] = useState(''); 
+
             const addMaterial = () => {
-                if (newItemName.trim() && !materials.find(m => m.name === newItemName.trim())) {
-                    setMaterials(prev => [...prev, { id: Date.now(), name: newItemName.trim(), opening: 0, receipt: 0, transfer: 0 }]);
+                if (newItemName.trim() && !materials.find(m => m.name.toLowerCase() === newItemName.trim().toLowerCase())) {
+                    setMaterials(prev => [...prev, { id: Date.now(), name: newItemName.trim(), unit: newItemUnit, opening: 0, receipt: 0, transfer: 0 }]);
                     setNewItemName('');
                 }
             };
@@ -399,19 +637,45 @@
             const deleteMaterial = (id) => {
                 if (window.confirm('Delete this material?')) setMaterials(prev => prev.filter(m => m.id !== id));
             };
+            
+            // Functions for name editing
+            const startEdit = (material) => {
+                setEditingId(material.id);
+                setEditName(material.name);
+            };
+
+            const saveEdit = (id) => {
+                if (editName.trim() && editName.trim().toLowerCase() !== materials.find(m => m.id === id).name.toLowerCase()) {
+                    setMaterials(prev => 
+                        prev.map(m => m.id === id ? { ...m, name: editName.trim() } : m)
+                    );
+                }
+                setEditingId(null);
+                setEditName('');
+            };
+
+            const cancelEdit = () => {
+                setEditingId(null);
+                setEditName('');
+            };
+
 
             return (
                 <Card className="col-span-full space-y-4">
                     <h3 className="font-bold text-lg flex items-center gap-2 text-indigo-700">1. Material Stock Management (சரக்கு மேலாண்மை)</h3>
-                    <div className="flex gap-2 pb-4 border-b border-slate-100">
-                        <input type="text" value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Enter New Material Name" className="flex-1 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
-                        <button onClick={addMaterial} className="bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 font-medium text-sm"><Plus size={18} /> Add Item</button>
+                    <div className="grid grid-cols-4 md:grid-cols-6 gap-2 pb-4 border-b border-slate-100">
+                        <input type="text" value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Enter New Material Name" className="col-span-2 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
+                         <select value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} className="col-span-1 p-2 border rounded-lg text-sm bg-slate-50">
+                            {MATERIAL_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
+                        </select>
+                        <button onClick={addMaterial} className="col-span-1 md:col-span-3 bg-indigo-600 text-white p-2 rounded-lg hover:bg-indigo-700 font-medium text-sm flex items-center justify-center"><Plus size={18} /> Add Item</button>
                     </div>
                     <div className="overflow-x-auto rounded-lg border border-slate-200">
                         <table className="w-full text-left bg-white text-sm">
                             <thead className="bg-slate-100 text-slate-600 sticky top-0">
                                 <tr>
-                                    <th className="p-3 w-[30%]">Item Name</th>
+                                    <th className="p-3 w-[25%]">Item Name</th>
+                                    <th className="p-3 text-center">Unit</th> 
                                     <th className="p-3 text-center">Opening Stock</th>
                                     <th className="p-3 text-center text-emerald-600">Receipt (In +)</th>
                                     <th className="p-3 text-center text-rose-600">Transfer (Out -)</th>
@@ -422,18 +686,45 @@
                             <tbody className="divide-y divide-slate-100">
                                 {materials.map(m => {
                                     const closing = m.opening + m.receipt - m.transfer;
+                                    const isEditing = editingId === m.id;
+
                                     return (
                                         <tr key={m.id} className="hover:bg-slate-50">
-                                            <td className="p-3 font-semibold text-slate-800">{m.name}</td>
+                                            <td className="p-3 font-semibold text-slate-800">
+                                                {isEditing ? (
+                                                    <input 
+                                                        type="text" 
+                                                        value={editName} 
+                                                        onChange={e => setEditName(e.target.value)} 
+                                                        className="w-full p-1 border border-indigo-300 rounded text-sm font-semibold"
+                                                        autoFocus
+                                                    />
+                                                ) : (
+                                                    m.name
+                                                )}
+                                            </td>
+                                            <td className="p-3 text-center text-xs font-medium text-slate-500">{m.unit}</td> 
                                             <td className="p-1"><InputCell value={m.opening} onChange={e => updateMaterial(m.id, 'opening', e.target.value)} /></td>
                                             <td className="p-1"><InputCell value={m.receipt} onChange={e => updateMaterial(m.id, 'receipt', e.target.value)} /></td>
                                             <td className="p-1"><InputCell value={m.transfer} onChange={e => updateMaterial(m.id, 'transfer', e.target.value)} /></td>
                                             <td className={`p-3 text-center font-bold ${closing >= 0 ? 'text-blue-600' : 'text-rose-600'}`}>{closing.toFixed(2)}</td>
-                                            <td className="p-3 text-center"><button onClick={() => deleteMaterial(m.id)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button></td>
+                                            <td className="p-3 text-center flex justify-center gap-1">
+                                                {isEditing ? (
+                                                    <>
+                                                        <button onClick={() => saveEdit(m.id)} className="text-green-600 hover:bg-green-100 p-1.5 rounded" title="Save"><CheckCircle2 size={16}/></button>
+                                                        <button onClick={cancelEdit} className="text-slate-500 hover:bg-slate-200 p-1.5 rounded" title="Cancel"><X size={16}/></button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <button onClick={() => startEdit(m)} className="text-blue-500 hover:bg-blue-100 p-1.5 rounded" title="Edit Name"><Edit2 size={16}/></button>
+                                                        <button onClick={() => deleteMaterial(m.id)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded" title="Delete"><Trash2 size={16}/></button>
+                                                    </>
+                                                )}
+                                            </td>
                                         </tr>
                                     );
                                 })}
-                                {materials.length === 0 && <tr><td colSpan="6" className="p-6 text-center text-slate-400">Start by adding a material item above.</td></tr>}
+                                {materials.length === 0 && <tr><td colSpan="7" className="p-6 text-center text-slate-400">Start by adding a material item above.</td></tr>}
                             </tbody>
                         </table>
                     </div>
@@ -441,7 +732,7 @@
             );
         };
 
-        // Section B: Labour Management (Muster Roll)
+        // Section B: Labour Management (Muster Roll) (Unchanged)
         const LabourMusterRoll = ({ musterRoll, setMusterRoll }) => {
             const [newMuster, setNewMuster] = useState({ jobName: LABOUR_JOB_NAMES[0], count: 1, dailyWage: 500 });
 
@@ -524,7 +815,7 @@
             );
         };
 
-        // Section C: Work Progress & Tools
+        // Section C: Work Progress & Tools (Unchanged)
         const WorkProgressTools = ({ workDone, setWorkDone, toolsAtSite, setToolsAtSite }) => {
             return (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -549,16 +840,17 @@
             );
         };
 
-        // New Site Management View
-        const SiteManagementView = ({ materials, setMaterials, musterRoll, setMusterRoll, workDone, setWorkDone, toolsAtSite, setToolsAtSite }) => {
+        // New Site Management View (Unchanged)
+        const SiteManagementView = ({ materials, setMaterials, musterRoll, setMusterRoll, workDone, setWorkDone, toolsAtSite, setToolsAtSite, milestones, setMilestones }) => {
             
-            // EXPORT FUNCTION for Site Data (Modified for 4 separate sheets)
+            // EXPORT FUNCTION for Site Data
             const exportSiteData = () => {
                 const wb = XLSX.utils.book_new();
 
                 // 1. Material Stock Sheet
                 const materialData = materials.map(m => ({
                     "Item Name": m.name,
+                    "Unit": m.unit,
                     "Opening Stock": m.opening,
                     "Receipt (In)": m.receipt,
                     "Transfer (Out)": m.transfer,
@@ -577,7 +869,7 @@
                 const wsMuster = XLSX.utils.json_to_sheet(musterData);
                 XLSX.utils.book_append_sheet(wb, wsMuster, "2. Muster Roll");
 
-                // 3. Work Progress Sheet (Now separate)
+                // 3. Work Progress Sheet 
                 const workProgressData = [
                     ["Work Progress (பணி முன்னேற்றம்)"],
                     ...workDone.split('\n').map(line => [line.trim()]).filter(line => line[0] !== "")
@@ -585,7 +877,7 @@
                 const wsWorkProgress = XLSX.utils.aoa_to_sheet(workProgressData);
                 XLSX.utils.book_append_sheet(wb, wsWorkProgress, "3. Work Progress");
 
-                // 4. Tools at Site Sheet (Now separate)
+                // 4. Tools at Site Sheet 
                 const toolsAtSiteData = [
                     ["Tools at Site (தளத்தில் உள்ள கருவிகள்)"],
                     ...toolsAtSite.split('\n').map(line => [line.trim()]).filter(line => line[0] !== "")
@@ -604,51 +896,110 @@
                     <MaterialStockTable materials={materials} setMaterials={setMaterials} />
                     <LabourMusterRoll musterRoll={musterRoll} setMusterRoll={setMusterRoll} />
                     <WorkProgressTools workDone={workDone} setWorkDone={setWorkDone} toolsAtSite={toolsAtSite} setToolsAtSite={setToolsAtSite} />
+                    <MilestonesAndRequirements milestones={milestones} setMilestones={setMilestones} materials={materials} />
                 </div>
             );
         };
 
-        // --- Sub-Views (Dashboard, Entry, Reports) ---
-        const DashboardView = ({ totalIncome, totalExpense, balance, transactions, setActiveTab, handleEdit, handleDelete }) => (
-            <div className="space-y-6 animate-in">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <Card className="border-l-4 border-l-emerald-500 bg-gradient-to-br from-white to-emerald-50/50">
-                        <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Total Income</p><h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalIncome.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-emerald-100 rounded-full"><TrendingUp className="w-6 h-6 text-emerald-600"/></div></div>
+        // --- Sub-Views ---
+        // Dashboard View (UPDATED FOR BUDGET VS ACTUAL)
+        const DashboardView = ({ totalIncome, totalExpense, balance, transactions, setActiveTab, handleEdit, handleDelete, projects, projectBudgets }) => {
+            
+            const projectExpenses = useMemo(() => {
+                return transactions.filter(t => t.type === 'expense').reduce((acc, curr) => {
+                    acc[curr.projectName] = (acc[curr.projectName] || 0) + parseFloat(curr.amount);
+                    return acc;
+                }, {});
+            }, [transactions]);
+
+
+            return (
+                <div className="space-y-6 animate-in">
+                    {/* Overall Financial Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <Card className="border-l-4 border-l-emerald-500 bg-gradient-to-br from-white to-emerald-50/50">
+                            <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Total Income</p><h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalIncome.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-emerald-100 rounded-full"><TrendingUp className="w-6 h-6 text-emerald-600"/></div></div>
+                        </Card>
+                        <Card className="border-l-4 border-l-rose-500 bg-gradient-to-br from-white to-rose-50/50">
+                            <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Total Expenses</p><h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalExpense.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-rose-100 rounded-full"><TrendingDown className="w-6 h-6 text-rose-600"/></div></div>
+                        </Card>
+                        <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-white to-blue-50/50">
+                            <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Net Balance</p><h3 className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-blue-700' : 'text-rose-600'}`}>₹ {balance.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-blue-100 rounded-full"><Wallet className="w-6 h-6 text-blue-600"/></div></div>
+                        </Card>
+                    </div>
+
+                    {/* Budget vs Actual Cost Tracking */}
+                    <Card className="overflow-hidden">
+                        <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2 mb-4"><Target size={20} className="text-blue-500"/> பட்ஜெட் vs. உண்மையான செலவு (Budget vs. Actual)</h3>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-3">Project Name</th><th className="p-3 text-right">Budget (₹)</th><th className="p-3 text-right">Actual Expense (₹)</th><th className="p-3 text-right">Variance (₹)</th><th className="p-3 text-center">Progress</th></tr></thead>
+                                <tbody className="text-sm divide-y divide-slate-100">
+                                    {projects.map((proj) => {
+                                        const budget = projectBudgets[proj] || 0;
+                                        const actual = projectExpenses[proj] || 0;
+                                        const variance = budget - actual;
+                                        const percentage = budget > 0 ? (actual / budget) * 100 : (actual > 0 ? 100 : 0);
+                                        const isOverBudget = variance < 0;
+
+                                        return (
+                                            <tr key={proj} className="hover:bg-slate-50">
+                                                <td className="p-3 font-medium text-slate-800">{proj}</td>
+                                                <td className="p-3 text-right font-bold text-blue-600">₹ {budget.toLocaleString('en-IN')}</td>
+                                                <td className="p-3 text-right font-bold text-rose-600">₹ {actual.toLocaleString('en-IN')}</td>
+                                                <td className={`p-3 text-right font-bold ${isOverBudget ? 'text-red-700' : 'text-emerald-700'}`}>
+                                                    {isOverBudget ? '-' : '+'} ₹ {Math.abs(variance).toLocaleString('en-IN')}
+                                                </td>
+                                                <td className="p-3">
+                                                    <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden" title={`${percentage.toFixed(1)}% Spent`}>
+                                                        <div className={`h-full rounded-full ${isOverBudget ? 'bg-red-500' : 'bg-emerald-500'}`} style={{ width: `${Math.min(percentage, 100)}%` }}></div>
+                                                    </div>
+                                                    <span className={`text-[10px] block mt-1 text-right ${isOverBudget ? 'text-red-500' : 'text-emerald-500'}`}>{percentage.toFixed(1)}% Spent</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                    {projects.length === 0 && <tr><td colSpan="5" className="p-8 text-center text-slate-400">No projects defined.</td></tr>}
+                                </tbody>
+                            </table>
+                        </div>
                     </Card>
-                    <Card className="border-l-4 border-l-rose-500 bg-gradient-to-br from-white to-rose-50/50">
-                        <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Total Expenses</p><h3 className="text-2xl font-bold text-slate-800 mt-1">₹ {totalExpense.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-rose-100 rounded-full"><TrendingDown className="w-6 h-6 text-rose-600"/></div></div>
-                    </Card>
-                    <Card className="border-l-4 border-l-blue-500 bg-gradient-to-br from-white to-blue-50/50">
-                        <div className="flex justify-between"><div><p className="text-sm text-slate-500 font-bold uppercase">Net Balance</p><h3 className={`text-2xl font-bold mt-1 ${balance >= 0 ? 'text-blue-700' : 'text-rose-600'}`}>₹ {balance.toLocaleString('en-IN')}</h3></div><div className="p-3 bg-blue-100 rounded-full"><Wallet className="w-6 h-6 text-blue-600"/></div></div>
+
+                    {/* Recent Activity */}
+                    <Card className="overflow-hidden">
+                        <div className="flex justify-between items-center mb-6"><h3 className="font-bold text-lg text-slate-800">Recent Activity</h3><button onClick={() => setActiveTab('reports')} className="text-sm text-blue-600 font-medium hover:underline flex items-center gap-1">View All <ArrowRight size={14}/></button></div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-4">Date</th><th className="p-4">Details</th><th className="p-4">Amount</th><th className="p-4 text-center">Status</th><th className="p-4 text-center">Actions</th></tr></thead>
+                                <tbody className="text-sm divide-y divide-slate-100">
+                                    {transactions.slice(0, 5).map((t) => (
+                                        <tr key={t.id} className="hover:bg-slate-50">
+                                            <td className="p-4 text-slate-600 whitespace-nowrap">{t.date}</td>
+                                            <td className="p-4"><div className="font-medium text-slate-800">{t.category}</div><div className="text-xs text-slate-500">{t.projectName} • {t.vendor}</div></td>
+                                            <td className={`p-4 font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>{t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}</td>
+                                            <td className="p-4 text-center"><Badge type={t.paymentStatus === 'Paid' ? 'paid' : 'pending'}>{t.paymentStatus}</Badge></td>
+                                            <td className="p-4 text-center"><div className="flex justify-center gap-2"><button onClick={() => handleEdit(t)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded" title="Edit"><Edit2 size={16}/></button><button onClick={() => handleDelete(t.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded" title="Delete"><Trash2 size={16}/></button></div></td>
+                                        </tr>
+                                    ))}
+                                    {transactions.length === 0 && <tr><td colSpan="5" className="p-8 text-center text-slate-400">No transactions yet.</td></tr>}
+                                </tbody>
+                            </table>
+                        </div>
                     </Card>
                 </div>
-                <Card className="overflow-hidden">
-                    <div className="flex justify-between items-center mb-6"><h3 className="font-bold text-lg text-slate-800">Recent Activity</h3><button onClick={() => setActiveTab('reports')} className="text-sm text-blue-600 font-medium hover:underline flex items-center gap-1">View All <ArrowRight size={14}/></button></div>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                            <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-4">Date</th><th className="p-4">Details</th><th className="p-4">Amount</th><th className="p-4 text-center">Status</th><th className="p-4 text-center">Actions</th></tr></thead>
-                            <tbody className="text-sm divide-y divide-slate-100">
-                                {transactions.slice(0, 5).map((t) => (
-                                    <tr key={t.id} className="hover:bg-slate-50">
-                                        <td className="p-4 text-slate-600 whitespace-nowrap">{t.date}</td>
-                                        <td className="p-4"><div className="font-medium text-slate-800">{t.category}</div><div className="text-xs text-slate-500">{t.projectName} • {t.vendor}</div></td>
-                                        <td className={`p-4 font-bold whitespace-nowrap ${t.type === 'income' ? 'text-emerald-600' : 'text-rose-600'}`}>{t.type === 'income' ? '+' : '-'} ₹{t.amount.toLocaleString('en-IN')}</td>
-                                        <td className="p-4 text-center"><Badge type={t.paymentStatus === 'Paid' ? 'paid' : 'pending'}>{t.paymentStatus}</Badge></td>
-                                        <td className="p-4 text-center"><div className="flex justify-center gap-2"><button onClick={() => handleEdit(t)} className="p-1.5 text-blue-500 hover:bg-blue-50 rounded" title="Edit"><Edit2 size={16}/></button><button onClick={() => handleDelete(t.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded" title="Delete"><Trash2 size={16}/></button></div></td>
-                                    </tr>
-                                ))}
-                                {transactions.length === 0 && <tr><td colSpan="5" className="p-8 text-center text-slate-400">No transactions yet.</td></tr>}
-                            </tbody>
-                        </table>
-                    </div>
-                </Card>
-            </div>
-        );
+            );
+        };
 
         const EntryFormView = ({ formData, setFormData, formType, setFormType, editingId, cancelEdit, handleSubmit, handleInputChange, projects, openProjectManager, formResetKey }) => {
             const [isManualInput, setIsManualInput] = useState(false);
             useEffect(() => { setIsManualInput(false); }, [formResetKey]);
             useEffect(() => { if (editingId && formData.projectName) { const isKnown = projects.includes(formData.projectName); setIsManualInput(!isKnown); } }, [editingId, formData.projectName, projects]);
+
+            // Function to handle the custom input (mock receipt/image URL)
+            const handleReceiptChange = (e) => {
+                const { name, value } = e.target;
+                setFormData(prev => ({ ...prev, [name]: value }));
+            };
 
             return (
                 <div className="max-w-4xl mx-auto space-y-6 animate-in">
@@ -700,12 +1051,14 @@
                                 <div className="relative"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span><input type="number" name="amount" value={formData.amount} onChange={handleInputChange} className="w-full pl-10 p-3 bg-slate-50 border border-slate-200 rounded-lg text-lg font-bold text-slate-800 focus:ring-2 focus:ring-blue-500 outline-none" placeholder="0.00" min="0" step="0.01" required /></div>
                             </div>
                             <div className="p-5 bg-slate-50 rounded-xl border border-slate-200/60 space-y-4">
-                                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2"><FileText size={14}/> Documentation Details</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Vendor / Client</label><input type="text" name="vendor" value={formData.vendor} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"/></div>
-                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Bill No</label><input type="text" name="billNo" value={formData.billNo} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"/></div>
-                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Payment Mode</label><select name="paymentMode" value={formData.paymentMode} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md outline-none">{PAYMENT_MODES.map(m=><option key={m} value={m}>{m}</option>)}</select></div>
-                                    <div><label className="block text-xs font-medium text-slate-600 mb-1">Status</label><select name="paymentStatus" value={formData.paymentStatus} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md outline-none">{PAYMENT_STATUS.map(s=><option key={s} value={s}>{s}</option>)}</select></div>
+                                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2"><FileText size={14}/> Documentation Details (ஆவணம்)</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div className="md:col-span-1"><label className="block text-xs font-medium text-slate-600 mb-1">Vendor / Client</label><input type="text" name="vendor" value={formData.vendor} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"/></div>
+                                    <div className="md:col-span-1"><label className="block text-xs font-medium text-slate-600 mb-1">Bill No</label><input type="text" name="billNo" value={formData.billNo} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none"/></div>
+                                    <div className="md:col-span-1"><label className="block text-xs font-medium text-slate-600 mb-1">Receipt URL / Ref (ரசீது இணைப்பு)</label><input type="text" name="receiptRef" value={formData.receiptRef} onChange={handleReceiptChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md focus:ring-1 focus:ring-blue-500 outline-none" placeholder="Paste URL or Ref No."/></div>
+
+                                    <div className="md:col-span-2"><label className="block text-xs font-medium text-slate-600 mb-1">Payment Mode</label><select name="paymentMode" value={formData.paymentMode} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md outline-none">{PAYMENT_MODES.map(m=><option key={m} value={m}>{m}</option>)}</select></div>
+                                    <div className="md:col-span-1"><label className="block text-xs font-medium text-slate-600 mb-1">Status</label><select name="paymentStatus" value={formData.paymentStatus} onChange={handleInputChange} className="w-full p-2.5 bg-white border border-slate-200 rounded-md outline-none">{PAYMENT_STATUS.map(s=><option key={s} value={s}>{s}</option>)}</select></div>
                                 </div>
                             </div>
                             <div><label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Notes</label><textarea name="notes" value={formData.notes} onChange={handleInputChange} rows="2" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Additional details..."></textarea></div>
@@ -719,9 +1072,11 @@
             );
         };
 
-        const ReportsView = ({ transactions, projects, totalExpense, handleDelete, handleEdit }) => {
+        const ReportsView = ({ transactions, projects, totalExpense, handleDelete, handleEdit, liabilities, setLiabilities }) => {
             const [searchTerm, setSearchTerm] = useState('');
             const [filterProject, setFilterProject] = useState('All');
+            const [reportTab, setReportTab] = useState('summary');
+
             const filteredTransactions = transactions.filter(t => {
                 const matchesSearch = t.category.toLowerCase().includes(searchTerm.toLowerCase()) || t.vendor.toLowerCase().includes(searchTerm.toLowerCase()) || (t.subCategory && t.subCategory.toLowerCase().includes(searchTerm.toLowerCase()));
                 const matchesProject = filterProject === 'All' || t.projectName === filterProject;
@@ -738,7 +1093,7 @@
 
                 // Sheet 1: Transaction Ledger (Raw Data)
                 const ledgerData = filteredTransactions.map(t => ({
-                    "Date": t.date, "Project Name": t.projectName, "Type": t.type === 'income' ? 'Income' : 'Expense', "Category": t.category, "Sub-Category": t.subCategory || '-', "Vendor/Party": t.vendor || '-', "Bill No": t.billNo || '-', "Payment Mode": t.paymentMode, "Status": t.paymentStatus, "Amount (INR)": parseFloat(t.amount), "Notes": t.notes || '-'
+                    "Date": t.date, "Project Name": t.projectName, "Type": t.type === 'income' ? 'Income' : 'Expense', "Category": t.category, "Sub-Category": t.subCategory || '-', "Vendor/Party": t.vendor || '-', "Bill No": t.billNo || '-', "Receipt Ref": t.receiptRef || '-', "Payment Mode": t.paymentMode, "Status": t.paymentStatus, "Amount (INR)": parseFloat(t.amount), "Notes": t.notes || '-'
                 }));
                 const wsLedger = XLSX.utils.json_to_sheet(ledgerData);
                 XLSX.utils.book_append_sheet(wb, wsLedger, "Transaction Ledger");
@@ -769,23 +1124,34 @@
 
             return (
                 <div className="space-y-8 animate-in">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <Card><h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3"><Building2 size={20} className="text-blue-500"/> Project Summary</h3><div className="space-y-4">{projects.map(proj => {
-                            const pInc = transactions.filter(t => t.projectName === proj && t.type === 'income').reduce((s,t)=>s+t.amount,0);
-                            const pExp = transactions.filter(t => t.projectName === proj && t.type === 'expense').reduce((s,t)=>s+t.amount,0);
-                            return <div key={proj} className="p-4 bg-slate-50 rounded-xl border border-slate-100"><div className="flex justify-between font-bold text-slate-800 mb-2">{proj}</div><div className="flex justify-between text-sm mb-1"><span>Inc: <span className="text-emerald-600">₹{pInc.toLocaleString()}</span></span><span>Exp: <span className="text-rose-600">₹{pExp.toLocaleString()}</span></span></div><div className={`text-right font-bold text-sm pt-2 border-t ${pInc-pExp>=0?'text-blue-600':'text-rose-600'}`}>{pInc-pExp>=0?'Profit':'Loss'}: ₹{(pInc-pExp).toLocaleString()}</div></div>
-                        })}</div></Card>
-                        <Card><h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3"><PieChart size={20} className="text-rose-500"/> Expense Breakdown</h3><div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">{sortedExpenses.map(([c,a])=><div key={c}><div className="flex justify-between text-sm mb-1"><span>{c}</span><span className="font-bold">₹ {a.toLocaleString()}</span></div><div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-rose-500 h-full rounded-full" style={{width:`${(a/totalExpense)*100}%`}}></div></div></div>)}</div></Card>
+                    <div className="flex bg-slate-100 p-1.5 rounded-xl mb-6 shadow-inner">
+                        <button type="button" onClick={() => setReportTab('summary')} className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${reportTab === 'summary' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500'}`}>Finance Summary (நிதி சுருக்கம்)</button>
+                        <button type="button" onClick={() => setReportTab('liabilities')} className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${reportTab === 'liabilities' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500'}`}>Loans & Liabilities (கடன் மேலாண்மை)</button>
                     </div>
-                    <Card>
-                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"><h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><FileText size={20} className="text-indigo-500"/> Transaction Ledger</h3><div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"><button onClick={exportToExcel} className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 shadow-sm"><Download size={16}/> Download Report</button><div className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><input type="text" placeholder="Search..." value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 w-full"/></div><div className="relative"><Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><select value={filterProject} onChange={(e)=>setFilterProject(e.target.value)} className="pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 appearance-none w-full"><option value="All">All Projects</option>{projects.map(p=><option key={p} value={p}>{p}</option>)}</select></div></div></div>
-                        <div className="overflow-x-auto rounded-lg border border-slate-200">
-                            <table className="w-full text-left border-collapse bg-white">
-                                <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-4">Date</th><th className="p-4">Details</th><th className="p-4">Party</th><th className="p-4 text-right">Amount</th><th className="p-4 text-center">Status</th><th className="p-4 text-center">Actions</th></tr></thead>
-                                <tbody className="text-sm divide-y divide-slate-100">{filteredTransactions.map(t=><tr key={t.id} className="hover:bg-slate-50"><td className="p-4 whitespace-nowrap text-slate-600">{t.date}</td><td className="p-4"><div className="font-semibold text-slate-800">{t.category}</div>{t.subCategory&&<div className="text-xs text-indigo-600">{t.subCategory}</div>}</td><td className="p-4"><div className="text-slate-800">{t.vendor||'-'}</div><div className="text-xs text-slate-500">{t.billNo && `Bill: ${t.billNo}`}</div></td><td className={`p-4 text-right font-bold whitespace-nowrap ${t.type==='income'?'text-emerald-600':'text-rose-600'}`}>{t.type==='income'?'+':'-'} ₹{t.amount.toLocaleString('en-IN')}</td><td className="p-4 text-center"><Badge type={t.paymentStatus==='Paid'?'paid':'pending'}>{t.paymentStatus}</Badge></td><td className="p-4 text-center"><div className="flex justify-center gap-2"><button onClick={()=>handleEdit(t)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded"><Edit2 size={16}/></button><button onClick={()=>handleDelete(t.id)} className="p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded"><Trash2 size={16}/></button></div></td></tr>)}</tbody>
-                            </table>
-                        </div>
-                    </Card>
+
+                    {reportTab === 'liabilities' && <LoansAndLiabilitiesView liabilities={liabilities} setLiabilities={setLiabilities} />}
+                    
+                    {reportTab === 'summary' && (
+                        <>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <Card><h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3"><Building2 size={20} className="text-blue-500"/> Project Summary</h3><div className="space-y-4">{projects.map(proj => {
+                                    const pInc = transactions.filter(t => t.projectName === proj && t.type === 'income').reduce((s,t)=>s+t.amount,0);
+                                    const pExp = transactions.filter(t => t.projectName === proj && t.type === 'expense').reduce((s,t)=>s+t.amount,0);
+                                    return <div key={proj} className="p-4 bg-slate-50 rounded-xl border border-slate-100"><div className="flex justify-between font-bold text-slate-800 mb-2">{proj}</div><div className="flex justify-between text-sm mb-1"><span>Inc: <span className="text-emerald-600">₹{pInc.toLocaleString()}</span></span><span>Exp: <span className="text-rose-600">₹{pExp.toLocaleString()}</span></span></div><div className={`text-right font-bold text-sm pt-2 border-t ${pInc-pExp>=0?'text-blue-600':'text-rose-600'}`}>{pInc-pExp>=0?'Profit':'Loss'}: ₹{(pInc-pExp).toLocaleString()}</div></div>
+                                })}</div></Card>
+                                <Card><h3 className="font-bold text-slate-700 mb-6 flex items-center gap-2 border-b pb-3"><PieChart size={20} className="text-rose-500"/> Expense Breakdown</h3><div className="space-y-4 max-h-[400px] overflow-y-auto custom-scrollbar">{sortedExpenses.map(([c,a])=><div key={c}><div className="flex justify-between text-sm mb-1"><span>{c}</span><span className="font-bold">₹ {a.toLocaleString()}</span></div><div className="w-full bg-slate-100 rounded-full h-2"><div className="bg-rose-500 h-full rounded-full" style={{width:`${(a/totalExpense)*100}%`}}></div></div></div>)}</div></Card>
+                            </div>
+                            <Card>
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4"><h3 className="font-bold text-lg text-slate-800 flex items-center gap-2"><FileText size={20} className="text-indigo-500"/> Transaction Ledger</h3><div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto"><button onClick={exportToExcel} className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 shadow-sm"><Download size={16}/> Download Report</button><div className="relative"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><input type="text" placeholder="Search..." value={searchTerm} onChange={(e)=>setSearchTerm(e.target.value)} className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 w-full"/></div><div className="relative"><Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"/><select value={filterProject} onChange={(e)=>setFilterProject(e.target.value)} className="pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none focus:ring-1 focus:ring-indigo-500 appearance-none w-full"><option value="All">All Projects</option>{projects.map(p=><option key={p} value={p}>{p}</option>)}</select></div></div></div>
+                                <div className="overflow-x-auto rounded-lg border border-slate-200">
+                                    <table className="w-full text-left border-collapse bg-white">
+                                        <thead><tr className="bg-slate-50 text-slate-500 text-xs font-bold uppercase border-b"><th className="p-4">Date</th><th className="p-4">Details</th><th className="p-4">Party</th><th className="p-4 text-right">Amount</th><th className="p-4 text-center">Status</th><th className="p-4 text-center">Actions</th></tr></thead>
+                                        <tbody className="text-sm divide-y divide-slate-100">{filteredTransactions.map(t=><tr key={t.id} className="hover:bg-slate-50"><td className="p-4 whitespace-nowrap text-slate-600">{t.date}</td><td className="p-4"><div className="font-semibold text-slate-800">{t.category}</div>{t.subCategory&&<div className="text-xs text-indigo-600">{t.subCategory}</div>}</td><td className="p-4"><div className="text-slate-800">{t.vendor||'-'}</div><div className="text-xs text-slate-500">{t.billNo && `Bill: ${t.billNo}`}</div></td><td className={`p-4 text-right font-bold whitespace-nowrap ${t.type==='income'?'text-emerald-600':'text-rose-600'}`}>{t.type==='income'?'+':'-'} ₹{t.amount.toLocaleString('en-IN')}</td><td className="p-4 text-center"><Badge type={t.paymentStatus==='Paid'?'paid':'pending'}>{t.paymentStatus}</Badge></td><td className="p-4 text-center"><div className="flex justify-center gap-2"><button onClick={()=>handleEdit(t)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded"><Edit2 size={16}/></button><button onClick={()=>handleDelete(t.id)} className="p-2 text-rose-600 bg-rose-50 hover:bg-rose-100 rounded"><Trash2 size={16}/></button></div></td></tr>)}</tbody>
+                                    </table>
+                                </div>
+                            </Card>
+                        </>
+                    )}
                 </div>
             );
         };
@@ -800,8 +1166,8 @@
             
             // New state for Site Management features
             const [materials, setMaterials] = useState([
-                { id: 1, name: 'Cement Bags (50kg)', opening: 50, receipt: 100, transfer: 30 },
-                { id: 2, name: 'Steel TMT (Tons)', opening: 2, receipt: 5, transfer: 1 },
+                { id: 1, name: 'Cement Bags (50kg)', unit: 'Bags', opening: 50, receipt: 100, transfer: 30 },
+                { id: 2, name: 'Steel TMT (Tons)', unit: 'Tons', opening: 2, receipt: 5, transfer: 1 },
             ]);
             const [musterRoll, setMusterRoll] = useState([
                 { id: 1, jobName: 'Mason', count: 3, dailyWage: 800 },
@@ -809,11 +1175,25 @@
             ]);
             const [workDone, setWorkDone] = useState('Foundation digging completed.\nFirst floor slab casting planned for tomorrow.');
             const [toolsAtSite, setToolsAtSite] = useState('Concrete Mixer (Good)\nWater Pump (Needs hose repair)\nShovels (10)');
+            const [milestones, setMilestones] = useState([
+                { id: 1, name: 'Foundation Completed', startDate: '2025-10-01', endDate: '2025-10-30', materialRequired: 'Cement Bags (50kg)', unit: 'Bags', quantity: 120 },
+                { id: 2, name: 'Roof Slab Casting', startDate: '2025-11-15', endDate: '2025-11-20', materialRequired: 'Steel TMT (Tons)', unit: 'Tons', quantity: 8 }
+            ]);
+            const [liabilities, setLiabilities] = useState([
+                { id: 1, type: 'Bank Loan', amount: 500000, dueDate: '2026-01-15', party: 'SBI Bank' },
+                { id: 2, type: 'Vendor Credit', amount: 45000, dueDate: '2025-12-10', party: 'ABC Steels' }
+            ]);
+            
+            // NEW STATE FOR BUDGETS
+            const [projectBudgets, setProjectBudgets] = useState({
+                'Main Project': 1500000,
+                'Small Repair Job': 50000,
+            });
 
             const [editingId, setEditingId] = useState(null);
             const [formType, setFormType] = useState('expense');
             const [isProjectManagerOpen, setIsProjectManagerOpen] = useState(false);
-            const [formData, setFormData] = useState({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' });
+            const [formData, setFormData] = useState({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', receiptRef: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' });
             const [formResetKey, setFormResetKey] = useState(0);
 
             const handleLogin = () => { setIsAuthenticated(true); sessionStorage.setItem('auth_token', 'valid'); };
@@ -828,6 +1208,9 @@
                 const savedMusterRoll = localStorage.getItem('construction_tracker_muster_roll');
                 const savedWorkDone = localStorage.getItem('construction_tracker_work_done');
                 const savedTools = localStorage.getItem('construction_tracker_tools');
+                const savedMilestones = localStorage.getItem('construction_tracker_milestones');
+                const savedLiabilities = localStorage.getItem('construction_tracker_liabilities');
+                const savedBudgets = localStorage.getItem('construction_tracker_budgets'); // New state loading
 
                 if (savedData) setTransactions(JSON.parse(savedData));
                 if (savedProjects) setProjects(JSON.parse(savedProjects));
@@ -838,6 +1221,9 @@
                 if (savedMusterRoll) setMusterRoll(JSON.parse(savedMusterRoll));
                 if (savedWorkDone) setWorkDone(savedWorkDone);
                 if (savedTools) setToolsAtSite(savedTools);
+                if (savedMilestones) setMilestones(JSON.parse(savedMilestones));
+                if (savedLiabilities) setLiabilities(JSON.parse(savedLiabilities));
+                if (savedBudgets) setProjectBudgets(JSON.parse(savedBudgets)); // New state initialization
             }, []);
 
             useEffect(() => { localStorage.setItem('construction_tracker_data', JSON.stringify(transactions)); }, [transactions]);
@@ -849,20 +1235,49 @@
             useEffect(() => { localStorage.setItem('construction_tracker_muster_roll', JSON.stringify(musterRoll)); }, [musterRoll]);
             useEffect(() => { localStorage.setItem('construction_tracker_work_done', workDone); }, [workDone]);
             useEffect(() => { localStorage.setItem('construction_tracker_tools', toolsAtSite); }, [toolsAtSite]);
+            useEffect(() => { localStorage.setItem('construction_tracker_milestones', JSON.stringify(milestones)); }, [milestones]);
+            useEffect(() => { localStorage.setItem('construction_tracker_liabilities', JSON.stringify(liabilities)); }, [liabilities]);
+            useEffect(() => { localStorage.setItem('construction_tracker_budgets', JSON.stringify(projectBudgets)); }, [projectBudgets]); // New state saving
 
             const totalIncome = transactions.filter(t => t.type === 'income').reduce((s, t) => s + parseFloat(t.amount || 0), 0);
             const totalExpense = transactions.filter(t => t.type === 'expense').reduce((s, t) => s + parseFloat(t.amount || 0), 0);
             const balance = totalIncome - totalExpense;
 
             const handleInputChange = (e) => { const { name, value } = e.target; setFormData(prev => ({ ...prev, [name]: value })); };
-            const handleEdit = (t) => { setEditingId(t.id); setFormType(t.type); setFormData({ date: t.date, projectName: t.projectName, category: t.category, subCategory: t.subCategory || '', amount: t.amount, vendor: t.vendor || '', billNo: t.billNo || '', paymentMode: t.paymentMode, paymentStatus: t.paymentStatus, notes: t.notes || '' }); setActiveTab('entry'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-            const cancelEdit = () => { setEditingId(null); setFormData({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' }); setFormResetKey(prev => prev + 1); };
-            const handleSubmit = (e) => { e.preventDefault(); if (!formData.amount || !formData.category) return; const newTransaction = { id: editingId || Date.now().toString(), type: formType, ...formData, amount: parseFloat(formData.amount) }; if (editingId) { setTransactions(prev => prev.map(t => t.id === editingId ? newTransaction : t)); window.alert("Entry Updated Successfully!"); } else { setTransactions([newTransaction, ...transactions]); window.alert("Entry Added Successfully!"); if (!projects.includes(formData.projectName)) { setProjects(prev => [...prev, formData.projectName]); } } setEditingId(null); setFormData(prev => ({ ...prev, category: '', subCategory: '', amount: '', vendor: '', billNo: '', notes: '' })); setFormResetKey(prev => prev + 1); };
+            const handleEdit = (t) => { setEditingId(t.id); setFormType(t.type); setFormData({ date: t.date, projectName: t.projectName, category: t.category, subCategory: t.subCategory || '', amount: t.amount, vendor: t.vendor || '', billNo: t.billNo || '', receiptRef: t.receiptRef || '', paymentMode: t.paymentMode, paymentStatus: t.paymentStatus, notes: t.notes || '' }); setActiveTab('entry'); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            const cancelEdit = () => { setEditingId(null); setFormData({ date: new Date().toISOString().split('T')[0], projectName: 'Main Project', category: '', subCategory: '', amount: '', vendor: '', billNo: '', receiptRef: '', paymentMode: 'Cash', paymentStatus: 'Paid', notes: '' }); setFormResetKey(prev => prev + 1); };
+            const handleSubmit = (e) => { e.preventDefault(); if (!formData.amount || !formData.category) return; const newTransaction = { id: editingId || Date.now().toString(), type: formType, ...formData, amount: parseFloat(formData.amount) }; if (editingId) { setTransactions(prev => prev.map(t => t.id === editingId ? newTransaction : t)); window.alert("Entry Updated Successfully!"); } else { setTransactions([newTransaction, ...transactions]); window.alert("Entry Added Successfully!"); if (!projects.includes(formData.projectName)) { setProjects(prev => [...prev, formData.projectName]); } } setEditingId(null); setFormData(prev => ({ ...prev, category: '', subCategory: '', amount: '', vendor: '', billNo: '', receiptRef: '', notes: '' })); setFormResetKey(prev => prev + 1); };
             const handleDelete = (id) => { if (window.confirm("Delete this entry?")) setTransactions(transactions.filter(t => t.id !== id)); };
 
             const handleAddProject = (name) => { if(!projects.includes(name)) setProjects([...projects, name]); };
-            const handleRenameProject = (oldName, newName) => { if(projects.includes(newName)) { window.alert("Project name already exists!"); return; } setProjects(projects.map(p => p === oldName ? newName : p)); setTransactions(transactions.map(t => t.projectName === oldName ? { ...t, projectName: newName } : t)); if(formData.projectName === oldName) setFormData({...formData, projectName: newName}); };
-            const handleDeleteProject = (name) => { if(window.confirm(`Delete project "${name}"?`)){ setProjects(projects.filter(p => p !== name)); } };
+            const handleRenameProject = (oldName, newName) => { 
+                if(projects.includes(newName)) { window.alert("Project name already exists!"); return; } 
+                setProjects(projects.map(p => p === oldName ? newName : p)); 
+                setTransactions(transactions.map(t => t.projectName === oldName ? { ...t, projectName: newName } : t)); 
+                if(formData.projectName === oldName) setFormData({...formData, projectName: newName}); 
+
+                // Update budget key
+                setProjectBudgets(prev => {
+                    const newBudgets = { ...prev };
+                    if (newBudgets[oldName] !== undefined) {
+                        newBudgets[newName] = newBudgets[oldName];
+                        delete newBudgets[oldName];
+                    }
+                    return newBudgets;
+                });
+            };
+
+            const handleDeleteProject = (name) => { 
+                if(window.confirm(`Delete project "${name}"?`)){ 
+                    setProjects(projects.filter(p => p !== name)); 
+                    // Delete associated budget
+                    setProjectBudgets(prev => {
+                        const newBudgets = { ...prev };
+                        delete newBudgets[name];
+                        return newBudgets;
+                    });
+                } 
+            };
 
             if (!isAuthenticated) return <LoginScreen onLogin={handleLogin} />;
 
@@ -884,11 +1299,11 @@
                             ))}
                         </div>
 
-                        {activeTab === 'dashboard' && <DashboardView totalIncome={totalIncome} totalExpense={totalExpense} balance={balance} transactions={transactions} setActiveTab={setActiveTab} handleEdit={handleEdit} handleDelete={handleDelete}/>}
+                        {activeTab === 'dashboard' && <DashboardView totalIncome={totalIncome} totalExpense={totalExpense} balance={balance} transactions={transactions} setActiveTab={setActiveTab} handleEdit={handleEdit} handleDelete={handleDelete} projects={projects} projectBudgets={projectBudgets}/>}
                         {activeTab === 'attendance' && <AttendanceView staff={staff} setStaff={setStaff} attendance={attendance} setAttendance={setAttendance} />}
-                        {activeTab === 'site' && <SiteManagementView materials={materials} setMaterials={setMaterials} musterRoll={musterRoll} setMusterRoll={setMusterRoll} workDone={workDone} setWorkDone={setWorkDone} toolsAtSite={toolsAtSite} setToolsAtSite={setToolsAtSite}/>}
+                        {activeTab === 'site' && <SiteManagementView materials={materials} setMaterials={setMaterials} musterRoll={musterRoll} setMusterRoll={setMusterRoll} workDone={workDone} setWorkDone={setWorkDone} toolsAtSite={toolsAtSite} setToolsAtSite={setToolsAtSite} milestones={milestones} setMilestones={setMilestones} />}
                         {activeTab === 'entry' && <EntryFormView formData={formData} setFormData={setFormData} formType={formType} setFormType={setFormType} editingId={editingId} cancelEdit={cancelEdit} handleSubmit={handleSubmit} handleInputChange={handleInputChange} projects={projects} openProjectManager={() => setIsProjectManagerOpen(true)} formResetKey={formResetKey} />}
-                        {activeTab === 'reports' && <ReportsView transactions={transactions} projects={projects} totalExpense={totalExpense} handleDelete={handleDelete} handleEdit={handleEdit}/>}
+                        {activeTab === 'reports' && <ReportsView transactions={transactions} projects={projects} totalExpense={totalExpense} handleDelete={handleDelete} handleEdit={handleEdit} liabilities={liabilities} setLiabilities={setLiabilities} />}
                     </main>
 
                     {/* மொபைல் வழிசெலுத்தல் பட்டி (Mobile Navigation Bar) */}
@@ -901,7 +1316,7 @@
                             {/* Attend. */}
                             <button onClick={() => setActiveTab('attendance')} className={`flex flex-col items-center gap-1 p-2 w-full ${activeTab === 'attendance' ? 'text-indigo-600' : 'text-slate-400'}`}><Clock size={20}/><span className="text-[10px] font-medium">Attend.</span></button>
                             
-                            {/* '+' பட்டன் - நடுவில் வைக்க வரிசை மாற்றப்பட்டுள்ளது */}
+                            {/* '+' பட்டன் - நடுவில் வைக்கப்பட்டுள்ளது */}
                             <button onClick={() => setActiveTab('entry')} className="flex flex-col items-center justify-center -mt-6">
                                 <div className="bg-indigo-600 text-white p-4 rounded-full shadow-lg ring-4 ring-white"><Plus size={24}/></div>
                             </button>
@@ -914,7 +1329,16 @@
                         </div>
                     </nav>
 
-                    <ProjectManagerModal isOpen={isProjectManagerOpen} onClose={() => setIsProjectManagerOpen(false)} projects={projects} onRename={handleRenameProject} onDelete={handleDeleteProject} onAdd={handleAddProject} />
+                    <ProjectManagerModal 
+                        isOpen={isProjectManagerOpen} 
+                        onClose={() => setIsProjectManagerOpen(false)} 
+                        projects={projects} 
+                        projectBudgets={projectBudgets}
+                        setProjectBudgets={setProjectBudgets}
+                        onRename={handleRenameProject} 
+                        onDelete={handleDeleteProject} 
+                        onAdd={handleAddProject} 
+                    />
                 </div>
             );
         }
@@ -924,3 +1348,4 @@
     </script>
 </body>
 </html>
+
