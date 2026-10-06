@@ -95,6 +95,13 @@
             <input type={type} value={value} onChange={onChange} min={min} step={type === "number" ? "0.01" : undefined} className={`w-full bg-transparent text-center p-1 outline-none text-sm ${className}`} placeholder={placeholder} />
         );
 
+        const ProjectSelect = ({ projects, value, onChange, className = "" }) => (
+            <select value={value || ""} onChange={e => onChange(e.target.value)} className={`w-full p-2 border rounded-lg text-sm bg-white ${className}`} required>
+                <option value="">Choose Project...</option>
+                {projects.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+        );
+
         // --- Authentication Component (Unchanged) ---
         const LoginScreen = ({ onLogin }) => {
             const [password, setPassword] = useState("");
@@ -271,9 +278,9 @@
         };
 
         // --- Attendance View (Unchanged) ---
-        const AttendanceView = ({ staff, setStaff, attendance, setAttendance }) => {
+        const AttendanceView = ({ staff, setStaff, attendance, setAttendance, projects }) => {
             const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
-            const [entry, setEntry] = useState({ date: new Date().toISOString().split('T')[0], staffId: '', inTime: '', outTime: '', hours: '' });
+            const [entry, setEntry] = useState({ date: new Date().toISOString().split('T')[0], projectName: projects[0] || '', staffId: '', inTime: '', outTime: '', hours: '' });
             const [editingId, setEditingId] = useState(null);
 
             // Time calculation logic
@@ -297,6 +304,7 @@
                 const record = { 
                     id: editingId || Date.now(), 
                     date: entry.date, 
+                    projectName: entry.projectName,
                     staffId: selectedStaff.id, 
                     staffName: selectedStaff.name, 
                     role: selectedStaff.role,
@@ -313,11 +321,11 @@
                 } else {
                     setAttendance(prev => [record, ...prev]);
                 }
-                setEntry(prev => ({ ...prev, staffId: '', inTime: '', outTime: '', hours: '' }));
+                setEntry(prev => ({ ...prev, projectName: projects[0] || '', staffId: '', inTime: '', outTime: '', hours: '' }));
             };
 
             const handleEdit = (rec) => {
-                setEntry({ date: rec.date, staffId: rec.staffId, inTime: rec.inTime || '', outTime: rec.outTime || '', hours: rec.hours });
+                setEntry({ date: rec.date, projectName: rec.projectName || projects[0] || '', staffId: rec.staffId, inTime: rec.inTime || '', outTime: rec.outTime || '', hours: rec.hours });
                 setEditingId(rec.id);
                 window.scrollTo({top:0, behavior:'smooth'});
             };
@@ -332,6 +340,7 @@
             const exportAttendance = () => {
                 const data = attendance.map(a => ({
                     "Date": a.date,
+                    "Project Name": a.projectName || "Unassigned",
                     "Staff Name": a.staffName,
                     "Role": a.role,
                     "Hourly Rate": a.hourlyRate,
@@ -357,6 +366,10 @@
                             <div className="md:col-span-1">
                                 <label className="block text-xs font-bold text-slate-500 mb-1">Date</label>
                                 <input type="date" value={entry.date} onChange={e => setEntry({...entry, date: e.target.value})} className="w-full p-2 border rounded-lg text-sm" required />
+                            </div>
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Project</label>
+                                <ProjectSelect projects={projects} value={entry.projectName} onChange={v => setEntry({...entry, projectName:v})} />
                             </div>
                             <div className="md:col-span-1">
                                 <label className="block text-xs font-bold text-slate-500 mb-1">Staff</label>
@@ -401,7 +414,7 @@
                                 <thead className="bg-slate-100 text-slate-600 sticky top-0">
                                     <tr>
                                         <th className="p-3">Date</th>
-                                        <th className="p-3">Staff</th>
+                                        <th className="p-3">Project</th><th className="p-3">Staff</th>
                                         <th className="p-3 text-center">In</th>
                                         <th className="p-3 text-center">Out</th>
                                         <th className="p-3 text-right">Hrs</th>
@@ -413,6 +426,7 @@
                                     {attendance.map(rec => (
                                         <tr key={rec.id} className="hover:bg-slate-50">
                                             <td className="p-3 whitespace-nowrap">{rec.date}</td>
+                                            <td className="p-3 font-medium text-indigo-600">{rec.projectName || "Unassigned"}</td>
                                             <td className="p-3">
                                                 <div className="font-bold">{rec.staffName}</div>
                                                 <div className="text-xs text-slate-500">{rec.role}</div>
@@ -427,7 +441,7 @@
                                             </td>
                                         </tr>
                                     ))}
-                                    {attendance.length === 0 && <tr><td colSpan="7" className="p-6 text-center text-slate-400">No attendance records found.</td></tr>}
+                                    {attendance.length === 0 && <tr><td colSpan="8" className="p-6 text-center text-slate-400">No attendance records found.</td></tr>}
                                 </tbody>
                             </table>
                         </div>
@@ -438,8 +452,8 @@
         };
 
         // --- Loans & Liabilities Management View (Unchanged) ---
-        const LoansAndLiabilitiesView = ({ liabilities, setLiabilities }) => {
-            const [form, setForm] = useState({ type: LIABILITY_TYPES[0], amount: '', dueDate: new Date().toISOString().split('T')[0], party: '', notes: '' });
+        const LoansAndLiabilitiesView = ({ liabilities, setLiabilities, projects }) => {
+            const [form, setForm] = useState({ projectName: projects[0] || '', type: LIABILITY_TYPES[0], amount: '', dueDate: new Date().toISOString().split('T')[0], party: '', notes: '' });
             const [editingId, setEditingId] = useState(null);
 
             const handleFormChange = (e) => {
@@ -462,7 +476,7 @@
                 } else {
                     setLiabilities(prev => [newLiability, ...prev]);
                 }
-                setForm({ type: LIABILITY_TYPES[0], amount: '', dueDate: new Date().toISOString().split('T')[0], party: '', notes: '' });
+                setForm({ projectName: projects[0] || '', type: LIABILITY_TYPES[0], amount: '', dueDate: new Date().toISOString().split('T')[0], party: '', notes: '' });
                 setEditingId(null);
             };
 
@@ -476,7 +490,11 @@
                 <div className="space-y-6 animate-in">
                     <Card>
                         <h3 className="font-bold text-lg flex items-center gap-2 text-red-600 mb-4"><Handshake size={20}/> Loans & Liabilities (கடன்கள் & பொறுப்புகள்)</h3>
-                        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end bg-red-50 p-4 rounded-xl border border-red-200">
+                        <form onSubmit={handleSave} className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end bg-red-50 p-4 rounded-xl border border-red-200">
+                            <div className="md:col-span-1">
+                                <label className="block text-xs font-bold text-slate-500 mb-1">Project</label>
+                                <ProjectSelect projects={projects} value={form.projectName} onChange={v => setForm({...form, projectName:v})} />
+                            </div>
                             <div className="md:col-span-1">
                                 <label className="block text-xs font-bold text-slate-500 mb-1">Type</label>
                                 <select name="type" value={form.type} onChange={handleFormChange} className="w-full p-2 border rounded-lg text-sm bg-white">
@@ -508,7 +526,7 @@
                             <table className="w-full text-left bg-white text-sm">
                                 <thead className="bg-slate-100 text-slate-600 sticky top-0">
                                     <tr>
-                                        <th className="p-3">Type</th>
+                                        <th className="p-3">Project</th><th className="p-3">Type</th>
                                         <th className="p-3">Party/Bank</th>
                                         <th className="p-3 text-right">Amount (₹)</th>
                                         <th className="p-3">Due Date</th>
@@ -518,6 +536,7 @@
                                 <tbody className="divide-y divide-slate-100">
                                     {liabilities.map(l => (
                                         <tr key={l.id} className="hover:bg-slate-50">
+                                            <td className="p-3 font-medium text-indigo-600">{l.projectName || "Unassigned"}</td>
                                             <td className="p-3"><Badge type="loan">{l.type}</Badge></td>
                                             <td className="p-3 font-medium text-slate-800">{l.party}</td>
                                             <td className="p-3 text-right font-bold text-red-600">₹{l.amount.toLocaleString('en-IN')}</td>
@@ -525,7 +544,7 @@
                                             <td className="p-3 text-center"><button onClick={() => handleDelete(l.id)} className="text-rose-500 hover:bg-rose-100 p-1 rounded"><Trash2 size={16}/></button></td>
                                         </tr>
                                     ))}
-                                    {liabilities.length === 0 && <tr><td colSpan="5" className="p-6 text-center text-slate-400">No liability records found.</td></tr>}
+                                    {liabilities.length === 0 && <tr><td colSpan="6" className="p-6 text-center text-slate-400">No liability records found.</td></tr>}
                                 </tbody>
                             </table>
                         </div>
@@ -538,8 +557,8 @@
         // --- Site Management Sub-Components ---
 
         // Milestones and Requirements Table (Unchanged)
-        const MilestonesAndRequirements = ({ milestones, setMilestones, materials }) => {
-            const [newMilestone, setNewMilestone] = useState({ name: '', startDate: new Date().toISOString().split('T')[0], endDate: '', materialRequired: '', unit: MATERIAL_UNITS[0], quantity: 0 });
+        const MilestonesAndRequirements = ({ milestones, setMilestones, materials, projects }) => {
+            const [newMilestone, setNewMilestone] = useState({ projectName: projects[0] || '', name: '', startDate: new Date().toISOString().split('T')[0], endDate: '', materialRequired: '', unit: MATERIAL_UNITS[0], quantity: 0 });
             
             const handleSave = (e) => {
                 e.preventDefault();
@@ -547,7 +566,7 @@
 
                 const milestone = { id: Date.now(), ...newMilestone, quantity: parseFloat(newMilestone.quantity || 0) };
                 setMilestones(prev => [milestone, ...prev]);
-                setNewMilestone({ name: '', startDate: new Date().toISOString().split('T')[0], endDate: '', materialRequired: '', unit: MATERIAL_UNITS[0], quantity: 0 });
+                setNewMilestone({ projectName: projects[0] || '', name: '', startDate: new Date().toISOString().split('T')[0], endDate: '', materialRequired: '', unit: MATERIAL_UNITS[0], quantity: 0 });
             };
 
             const handleDelete = (id) => {
@@ -587,7 +606,7 @@
                         <table className="w-full text-left bg-white text-sm">
                             <thead className="bg-slate-100 text-slate-600 sticky top-0">
                                 <tr>
-                                    <th className="p-3 w-[25%]">Milestone</th>
+                                    <th className="p-3">Project</th><th className="p-3 w-[25%]">Milestone</th>
                                     <th className="p-3">Timeline</th>
                                     <th className="p-3">Required Material</th>
                                     <th className="p-3 text-center">Stock Status</th>
@@ -599,6 +618,7 @@
                                     const status = getStockStatus(m.materialRequired, m.quantity);
                                     return (
                                         <tr key={m.id} className="hover:bg-slate-50">
+                                            <td className="p-3 font-medium text-indigo-600">{m.projectName || "Unassigned"}</td>
                                             <td className="p-3 font-semibold text-slate-800">{m.name}</td>
                                             <td className="p-3 text-xs text-slate-600">{m.startDate} to {m.endDate}</td>
                                             <td className="p-3 text-xs text-indigo-600 font-medium">{m.quantity} {m.unit} of {m.materialRequired}</td>
@@ -607,7 +627,7 @@
                                         </tr>
                                     );
                                 })}
-                                {milestones.length === 0 && <tr><td colSpan="5" className="p-6 text-center text-slate-400">No milestones set.</td></tr>}
+                                {milestones.length === 0 && <tr><td colSpan="6" className="p-6 text-center text-slate-400">No milestones set.</td></tr>}
                             </tbody>
                         </table>
                     </div>
@@ -616,7 +636,8 @@
         };
 
         // Section A: Material Stock Management (With Edit)
-        const MaterialStockTable = ({ materials, setMaterials }) => {
+        const MaterialStockTable = ({ materials, setMaterials, projects }) => {
+            const [newItemProject, setNewItemProject] = useState(projects[0] || '');
             const [newItemName, setNewItemName] = useState('');
             const [newItemUnit, setNewItemUnit] = useState(MATERIAL_UNITS[0]); 
             const [editingId, setEditingId] = useState(null); 
@@ -624,8 +645,8 @@
 
             const addMaterial = () => {
                 if (newItemName.trim() && !materials.find(m => m.name.toLowerCase() === newItemName.trim().toLowerCase())) {
-                    setMaterials(prev => [...prev, { id: Date.now(), name: newItemName.trim(), unit: newItemUnit, opening: 0, receipt: 0, transfer: 0 }]);
-                    setNewItemName('');
+                    setMaterials(prev => [...prev, { id: Date.now(), projectName: newItemProject, name: newItemName.trim(), unit: newItemUnit, opening: 0, receipt: 0, transfer: 0 }]);
+                    setNewItemName(''); setNewItemProject(projects[0] || '');
                 }
             };
 
@@ -664,6 +685,7 @@
                 <Card className="col-span-full space-y-4">
                     <h3 className="font-bold text-lg flex items-center gap-2 text-indigo-700">1. Material Stock Management (சரக்கு மேலாண்மை)</h3>
                     <div className="grid grid-cols-4 md:grid-cols-6 gap-2 pb-4 border-b border-slate-100">
+                        <ProjectSelect projects={projects} value={newItemProject} onChange={setNewItemProject} className="col-span-2" />
                         <input type="text" value={newItemName} onChange={e => setNewItemName(e.target.value)} placeholder="Enter New Material Name" className="col-span-2 p-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none" />
                          <select value={newItemUnit} onChange={e => setNewItemUnit(e.target.value)} className="col-span-1 p-2 border rounded-lg text-sm bg-slate-50">
                             {MATERIAL_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
@@ -674,7 +696,7 @@
                         <table className="w-full text-left bg-white text-sm">
                             <thead className="bg-slate-100 text-slate-600 sticky top-0">
                                 <tr>
-                                    <th className="p-3 w-[25%]">Item Name</th>
+                                    <th className="p-3">Project</th><th className="p-3 w-[25%]">Item Name</th>
                                     <th className="p-3 text-center">Unit</th> 
                                     <th className="p-3 text-center">Opening Stock</th>
                                     <th className="p-3 text-center text-emerald-600">Receipt (In +)</th>
@@ -690,6 +712,7 @@
 
                                     return (
                                         <tr key={m.id} className="hover:bg-slate-50">
+                                            <td className="p-3 font-medium text-indigo-600">{m.projectName || "Unassigned"}</td>
                                             <td className="p-3 font-semibold text-slate-800">
                                                 {isEditing ? (
                                                     <input 
@@ -724,7 +747,7 @@
                                         </tr>
                                     );
                                 })}
-                                {materials.length === 0 && <tr><td colSpan="7" className="p-6 text-center text-slate-400">Start by adding a material item above.</td></tr>}
+                                {materials.length === 0 && <tr><td colSpan="8" className="p-6 text-center text-slate-400">Start by adding a material item above.</td></tr>}
                             </tbody>
                         </table>
                     </div>
@@ -733,8 +756,8 @@
         };
 
         // Section B: Labour Management (Muster Roll) (Unchanged)
-        const LabourMusterRoll = ({ musterRoll, setMusterRoll }) => {
-            const [newMuster, setNewMuster] = useState({ jobName: LABOUR_JOB_NAMES[0], count: 1, dailyWage: 500 });
+        const LabourMusterRoll = ({ musterRoll, setMusterRoll, projects }) => {
+            const [newMuster, setNewMuster] = useState({ projectName: projects[0] || '', jobName: LABOUR_JOB_NAMES[0], count: 1, dailyWage: 500 });
 
             const handleMusterChange = (e) => {
                 const { name, value } = e.target;
@@ -744,7 +767,7 @@
             const addMusterEntry = () => {
                 if (newMuster.jobName && newMuster.count > 0 && newMuster.dailyWage > 0) {
                     setMusterRoll(prev => [...prev, { id: Date.now(), ...newMuster }]);
-                    setNewMuster({ jobName: LABOUR_JOB_NAMES[0], count: 1, dailyWage: 500 });
+                    setNewMuster({ projectName: projects[0] || '', jobName: LABOUR_JOB_NAMES[0], count: 1, dailyWage: 500 });
                 }
             };
 
@@ -759,7 +782,11 @@
             return (
                 <Card className="col-span-full space-y-4">
                     <h3 className="font-bold text-lg flex items-center gap-2 text-rose-700">2. Daily Labour Muster Roll (தினசரி பணியாளர் பதிவேடு)</h3>
-                    <div className="grid grid-cols-6 gap-3 pb-4 border-b border-slate-100 items-end">
+                    <div className="grid grid-cols-7 gap-3 pb-4 border-b border-slate-100 items-end">
+                        <div className="col-span-2">
+                            <label className="block text-xs font-bold text-slate-500 mb-1">Project</label>
+                            <ProjectSelect projects={projects} value={newMuster.projectName} onChange={v => setNewMuster({...newMuster, projectName:v})} />
+                        </div>
                         <div className="col-span-2">
                             <label className="block text-xs font-bold text-slate-500 mb-1">Job Role</label>
                             <select name="jobName" value={newMuster.jobName} onChange={handleMusterChange} className="w-full p-2 border rounded-lg text-sm bg-slate-50">
@@ -781,7 +808,7 @@
                         <table className="w-full text-left bg-white text-sm">
                             <thead className="bg-slate-100 text-slate-600 sticky top-0">
                                 <tr>
-                                    <th className="p-3 w-[40%]">Job Name</th>
+                                    <th className="p-3">Project</th><th className="p-3 w-[40%]">Job Name</th>
                                     <th className="p-3 text-center">Count</th>
                                     <th className="p-3 text-right">Daily Wage (₹)</th>
                                     <th className="p-3 text-right">Total Amount (₹)</th>
@@ -791,6 +818,7 @@
                             <tbody className="divide-y divide-slate-100">
                                 {musterRoll.map(m => (
                                     <tr key={m.id} className="hover:bg-slate-50">
+                                        <td className="p-3 font-medium text-indigo-600">{m.projectName || "Unassigned"}</td>
                                         <td className="p-3 font-semibold text-slate-800">{m.jobName}</td>
                                         <td className="p-3 text-center">{m.count}</td>
                                         <td className="p-3 text-right">₹{m.dailyWage.toLocaleString('en-IN')}</td>
@@ -798,12 +826,12 @@
                                         <td className="p-3 text-center"><button onClick={() => deleteMuster(m.id)} className="text-rose-500 hover:bg-rose-100 p-1.5 rounded"><Trash2 size={16}/></button></td>
                                     </tr>
                                 ))}
-                                {musterRoll.length === 0 && <tr><td colSpan="5" className="p-6 text-center text-slate-400">Add staff to the muster roll.</td></tr>}
+                                {musterRoll.length === 0 && <tr><td colSpan="6" className="p-6 text-center text-slate-400">Add staff to the muster roll.</td></tr>}
                             </tbody>
                             {musterRoll.length > 0 && (
                                 <tfoot className="bg-slate-100 font-bold border-t-2 border-slate-300">
                                     <tr>
-                                        <td colSpan="3" className="p-3 text-right text-base text-slate-800">GRAND TOTAL:</td>
+                                        <td colSpan="4" className="p-3 text-right text-base text-slate-800">GRAND TOTAL:</td>
                                         <td className="p-3 text-right text-base text-rose-700">₹{grandTotal.toLocaleString('en-IN')}</td>
                                         <td className="p-3"></td>
                                     </tr>
@@ -841,7 +869,7 @@
         };
 
         // New Site Management View (Unchanged)
-        const SiteManagementView = ({ materials, setMaterials, musterRoll, setMusterRoll, workDone, setWorkDone, toolsAtSite, setToolsAtSite, milestones, setMilestones }) => {
+        const SiteManagementView = ({ materials, setMaterials, musterRoll, setMusterRoll, workDone, setWorkDone, toolsAtSite, setToolsAtSite, milestones, setMilestones, projects }) => {
             
             // EXPORT FUNCTION for Site Data
             const exportSiteData = () => {
@@ -893,10 +921,10 @@
                     <div className="flex justify-end mb-4">
                         <button onClick={exportSiteData} className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 shadow-sm"><Download size={16}/> Download Site Report</button>
                     </div>
-                    <MaterialStockTable materials={materials} setMaterials={setMaterials} />
-                    <LabourMusterRoll musterRoll={musterRoll} setMusterRoll={setMusterRoll} />
+                    <MaterialStockTable materials={materials} setMaterials={setMaterials} projects={projects} />
+                    <LabourMusterRoll musterRoll={musterRoll} setMusterRoll={setMusterRoll} projects={projects} />
                     <WorkProgressTools workDone={workDone} setWorkDone={setWorkDone} toolsAtSite={toolsAtSite} setToolsAtSite={setToolsAtSite} />
-                    <MilestonesAndRequirements milestones={milestones} setMilestones={setMilestones} materials={materials} />
+                    <MilestonesAndRequirements milestones={milestones} setMilestones={setMilestones} materials={materials} projects={projects} />
                 </div>
             );
         };
@@ -1072,7 +1100,45 @@
             );
         };
 
-        const ReportsView = ({ transactions, projects, totalExpense, handleDelete, handleEdit, liabilities, setLiabilities }) => {
+        const ProjectReportView = ({ transactions, projects, attendance, materials, musterRoll, milestones, liabilities, workDone, toolsAtSite }) => {
+            const [project, setProject] = useState(projects[0] || 'All');
+            const [selected, setSelected] = useState({income:true, expense:true, material:true, labour:true, attendance:true, progress:true, tools:true, milestones:true, liabilities:true});
+            const toggle = k => setSelected(prev => ({...prev, [k]:!prev[k]}));
+            const match = x => project === 'All' || (x.projectName || 'Unassigned') === project;
+            const tx = transactions.filter(match);
+            const inc = tx.filter(x=>x.type==='income').reduce((s,x)=>s+Number(x.amount||0),0);
+            const exp = tx.filter(x=>x.type==='expense').reduce((s,x)=>s+Number(x.amount||0),0);
+            const mats = materials.filter(match), lab=musterRoll.filter(match), att=attendance.filter(match), mil=milestones.filter(match), liab=liabilities.filter(match);
+            const totalLab=lab.reduce((s,x)=>s+(Number(x.count)||0)*(Number(x.dailyWage)||0),0);
+            const totalAtt=att.reduce((s,x)=>s+Number(x.totalPay||0),0);
+            const totalLiab=liab.reduce((s,x)=>s+Number(x.amount||0),0);
+            const printReport=()=>window.print();
+            const exportReport=()=>{ const wb=XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([["PROJECT REPORT"],["Project",project],["Income",inc],["Expense",exp],["Balance",inc-exp],["Labour Muster",totalLab],["Attendance Pay",totalAtt],["Liabilities",totalLiab]]),"Summary");
+                if(selected.income||selected.expense) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(tx.map(x=>({Date:x.date,Project:x.projectName,Type:x.type,Category:x.category,Party:x.vendor,Amount:Number(x.amount),Status:x.paymentStatus}))),"Finance");
+                if(selected.material) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(mats.map(x=>({Project:x.projectName,Material:x.name,Unit:x.unit,Opening:x.opening,Receipt:x.receipt,Transfer:x.transfer,Closing:x.opening+x.receipt-x.transfer}))),"Materials");
+                if(selected.labour) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(lab.map(x=>({Project:x.projectName,Job:x.jobName,Count:x.count,Wage:x.dailyWage,Total:x.count*x.dailyWage}))),"Labour");
+                if(selected.attendance) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(att.map(x=>({Date:x.date,Project:x.projectName,Staff:x.staffName,Role:x.role,Hours:x.hours,Pay:x.totalPay}))),"Attendance");
+                if(selected.milestones) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(mil.map(x=>({Project:x.projectName,Milestone:x.name,Start:x.startDate,End:x.endDate,Material:x.materialRequired,Qty:x.quantity,Unit:x.unit}))),"Milestones");
+                if(selected.liabilities) XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(liab.map(x=>({Project:x.projectName,Type:x.type,Party:x.party,Amount:x.amount,DueDate:x.dueDate}))),"Liabilities");
+                XLSX.writeFile(wb,`Project_Report_${project.replace(/\\s+/g,'_')}_${new Date().toISOString().split('T')[0]}.xlsx`); };
+            const modules=[['income','Income'],['expense','Expense'],['material','Material Stock'],['labour','Labour'],['attendance','Attendance'],['progress','Work Progress'],['tools','Tools at Site'],['milestones','Milestones'],['liabilities','Loans & Liabilities']];
+            return <div className="space-y-5 print:bg-white">
+                <Card><div className="flex flex-col md:flex-row gap-4 items-end"><div className="flex-1"><label className="block text-xs font-bold text-slate-500 mb-1">Project Select</label><select value={project} onChange={e=>setProject(e.target.value)} className="w-full p-3 border rounded-lg bg-white"><option value="All">All Projects</option>{projects.map(p=><option key={p}>{p}</option>)}</select></div><button onClick={exportReport} className="bg-green-600 text-white px-4 py-3 rounded-lg font-bold flex gap-2 items-center"><Download size={17}/> Excel</button><button onClick={printReport} className="bg-slate-800 text-white px-4 py-3 rounded-lg font-bold">Print / PDF</button></div></Card>
+                <Card><h3 className="font-bold text-lg mb-3">Module Select</h3><div className="grid grid-cols-2 md:grid-cols-5 gap-3">{modules.map(([k,label])=><label key={k} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg text-sm"><input type="checkbox" checked={selected[k]} onChange={()=>toggle(k)} />{label}</label>)}</div></Card>
+                <Card><div className="grid grid-cols-2 md:grid-cols-5 gap-3"><div className="p-3 bg-emerald-50 rounded-lg"><div className="text-xs">Income</div><b>₹{inc.toLocaleString('en-IN')}</b></div><div className="p-3 bg-rose-50 rounded-lg"><div className="text-xs">Expense</div><b>₹{exp.toLocaleString('en-IN')}</b></div><div className="p-3 bg-blue-50 rounded-lg"><div className="text-xs">Balance</div><b>₹{(inc-exp).toLocaleString('en-IN')}</b></div><div className="p-3 bg-orange-50 rounded-lg"><div className="text-xs">Labour</div><b>₹{totalLab.toLocaleString('en-IN')}</b></div><div className="p-3 bg-red-50 rounded-lg"><div className="text-xs">Liabilities</div><b>₹{totalLiab.toLocaleString('en-IN')}</b></div></div></Card>
+                {selected.income||selected.expense ? <Card><h3 className="font-bold mb-3">Finance</h3><div className="overflow-x-auto"><table className="w-full text-sm"><thead className="bg-slate-100"><tr><th className="p-2 text-left">Date</th><th className="p-2 text-left">Type</th><th className="p-2 text-left">Category</th><th className="p-2 text-left">Party</th><th className="p-2 text-right">Amount</th></tr></thead><tbody>{tx.filter(x=>(x.type==='income'&&selected.income)||(x.type==='expense'&&selected.expense)).map(x=><tr key={x.id} className="border-b"><td className="p-2">{x.date}</td><td className="p-2">{x.type}</td><td className="p-2">{x.category}</td><td className="p-2">{x.vendor||'-'}</td><td className="p-2 text-right">₹{Number(x.amount).toLocaleString('en-IN')}</td></tr>)}</tbody></table></div></Card> : null}
+                {selected.material ? <Card><h3 className="font-bold mb-3">Material Stock</h3>{mats.map(x=><div key={x.id} className="flex justify-between border-b py-2 text-sm"><span>{x.name} ({x.unit})</span><span>Closing: {x.opening+x.receipt-x.transfer}</span></div>)}{!mats.length&&<p className="text-slate-400">No records</p>}</Card>:null}
+                {selected.labour ? <Card><h3 className="font-bold mb-3">Labour</h3>{lab.map(x=><div key={x.id} className="flex justify-between border-b py-2 text-sm"><span>{x.jobName} × {x.count}</span><b>₹{(x.count*x.dailyWage).toLocaleString('en-IN')}</b></div>)}{!lab.length&&<p className="text-slate-400">No records</p>}</Card>:null}
+                {selected.attendance ? <Card><h3 className="font-bold mb-3">Attendance</h3>{att.map(x=><div key={x.id} className="flex justify-between border-b py-2 text-sm"><span>{x.date} — {x.staffName}</span><span>{x.hours} hrs / ₹{Math.round(x.totalPay)}</span></div>)}{!att.length&&<p className="text-slate-400">No records</p>}</Card>:null}
+                {selected.progress ? <Card><h3 className="font-bold mb-3">Work Progress</h3><pre className="whitespace-pre-wrap text-sm">{project==='All'||project===undefined?workDone:(workDone||'No project-linked work progress')||'No records'}</pre></Card>:null}
+                {selected.tools ? <Card><h3 className="font-bold mb-3">Tools at Site</h3><pre className="whitespace-pre-wrap text-sm">{toolsAtSite||'No records'}</pre></Card>:null}
+                {selected.milestones ? <Card><h3 className="font-bold mb-3">Milestones</h3>{mil.map(x=><div key={x.id} className="border-b py-2 text-sm"><b>{x.name}</b> — {x.startDate} to {x.endDate} — {x.quantity} {x.unit}</div>)}{!mil.length&&<p className="text-slate-400">No records</p>}</Card>:null}
+                {selected.liabilities ? <Card><h3 className="font-bold mb-3">Loans & Liabilities</h3>{liab.map(x=><div key={x.id} className="flex justify-between border-b py-2 text-sm"><span>{x.type} — {x.party}</span><b>₹{Number(x.amount).toLocaleString('en-IN')}</b></div>)}{!liab.length&&<p className="text-slate-400">No records</p>}</Card>:null}
+            </div>;
+        };
+
+        const ReportsView = ({ transactions, projects, totalExpense, handleDelete, handleEdit, liabilities, setLiabilities, attendance, materials, musterRoll, milestones, workDone, toolsAtSite }) => {
             const [searchTerm, setSearchTerm] = useState('');
             const [filterProject, setFilterProject] = useState('All');
             const [reportTab, setReportTab] = useState('summary');
@@ -1125,11 +1191,12 @@
             return (
                 <div className="space-y-8 animate-in">
                     <div className="flex bg-slate-100 p-1.5 rounded-xl mb-6 shadow-inner">
-                        <button type="button" onClick={() => setReportTab('summary')} className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${reportTab === 'summary' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500'}`}>Finance Summary (நிதி சுருக்கம்)</button>
+                        <button type="button" onClick={() => setReportTab('project')} className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${reportTab === 'project' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500'}`}>Project Report</button><button type="button" onClick={() => setReportTab('summary')} className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${reportTab === 'summary' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500'}`}>Finance Summary (நிதி சுருக்கம்)</button>
                         <button type="button" onClick={() => setReportTab('liabilities')} className={`flex-1 py-2.5 rounded-lg font-bold text-sm transition-all ${reportTab === 'liabilities' ? 'bg-white shadow-sm text-indigo-700' : 'text-slate-500'}`}>Loans & Liabilities (கடன் மேலாண்மை)</button>
                     </div>
 
-                    {reportTab === 'liabilities' && <LoansAndLiabilitiesView liabilities={liabilities} setLiabilities={setLiabilities} />}
+                    {reportTab === 'project' && <ProjectReportView transactions={transactions} projects={projects} attendance={attendance} materials={materials} musterRoll={musterRoll} milestones={milestones} liabilities={liabilities} workDone={workDone} toolsAtSite={toolsAtSite} />}
+                    {reportTab === 'liabilities' && <LoansAndLiabilitiesView liabilities={liabilities} setLiabilities={setLiabilities} projects={projects} />}
                     
                     {reportTab === 'summary' && (
                         <>
@@ -1170,18 +1237,18 @@
                 { id: 2, name: 'Steel TMT (Tons)', unit: 'Tons', opening: 2, receipt: 5, transfer: 1 },
             ]);
             const [musterRoll, setMusterRoll] = useState([
-                { id: 1, jobName: 'Mason', count: 3, dailyWage: 800 },
-                { id: 2, jobName: 'Helper', count: 5, dailyWage: 500 },
+                { id: 1, projectName: 'Main Project', jobName: 'Mason', count: 3, dailyWage: 800 },
+                { id: 2, projectName: 'Main Project', jobName: 'Helper', count: 5, dailyWage: 500 },
             ]);
             const [workDone, setWorkDone] = useState('Foundation digging completed.\nFirst floor slab casting planned for tomorrow.');
             const [toolsAtSite, setToolsAtSite] = useState('Concrete Mixer (Good)\nWater Pump (Needs hose repair)\nShovels (10)');
             const [milestones, setMilestones] = useState([
-                { id: 1, name: 'Foundation Completed', startDate: '2025-10-01', endDate: '2025-10-30', materialRequired: 'Cement Bags (50kg)', unit: 'Bags', quantity: 120 },
-                { id: 2, name: 'Roof Slab Casting', startDate: '2025-11-15', endDate: '2025-11-20', materialRequired: 'Steel TMT (Tons)', unit: 'Tons', quantity: 8 }
+                { id: 1, projectName: 'Main Project', name: 'Foundation Completed', startDate: '2025-10-01', endDate: '2025-10-30', materialRequired: 'Cement Bags (50kg)', unit: 'Bags', quantity: 120 },
+                { id: 2, projectName: 'Main Project', name: 'Roof Slab Casting', startDate: '2025-11-15', endDate: '2025-11-20', materialRequired: 'Steel TMT (Tons)', unit: 'Tons', quantity: 8 }
             ]);
             const [liabilities, setLiabilities] = useState([
-                { id: 1, type: 'Bank Loan', amount: 500000, dueDate: '2026-01-15', party: 'SBI Bank' },
-                { id: 2, type: 'Vendor Credit', amount: 45000, dueDate: '2025-12-10', party: 'ABC Steels' }
+                { id: 1, projectName: 'Main Project', type: 'Bank Loan', amount: 500000, dueDate: '2026-01-15', party: 'SBI Bank' },
+                { id: 2, projectName: 'Main Project', type: 'Vendor Credit', amount: 45000, dueDate: '2025-12-10', party: 'ABC Steels' }
             ]);
             
             // NEW STATE FOR BUDGETS
@@ -1215,14 +1282,14 @@
                 if (savedData) setTransactions(JSON.parse(savedData));
                 if (savedProjects) setProjects(JSON.parse(savedProjects));
                 if (savedStaff) setStaff(JSON.parse(savedStaff));
-                if (savedAttendance) setAttendance(JSON.parse(savedAttendance));
+                if (savedAttendance) setAttendance(JSON.parse(savedAttendance).map(x => ({...x, projectName: x.projectName || 'Main Project'})));
                 
-                if (savedMaterials) setMaterials(JSON.parse(savedMaterials));
-                if (savedMusterRoll) setMusterRoll(JSON.parse(savedMusterRoll));
+                if (savedMaterials) setMaterials(JSON.parse(savedMaterials).map(x => ({...x, projectName: x.projectName || 'Main Project'})));
+                if (savedMusterRoll) setMusterRoll(JSON.parse(savedMusterRoll).map(x => ({...x, projectName: x.projectName || 'Main Project'})));
                 if (savedWorkDone) setWorkDone(savedWorkDone);
                 if (savedTools) setToolsAtSite(savedTools);
-                if (savedMilestones) setMilestones(JSON.parse(savedMilestones));
-                if (savedLiabilities) setLiabilities(JSON.parse(savedLiabilities));
+                if (savedMilestones) setMilestones(JSON.parse(savedMilestones).map(x => ({...x, projectName: x.projectName || 'Main Project'})));
+                if (savedLiabilities) setLiabilities(JSON.parse(savedLiabilities).map(x => ({...x, projectName: x.projectName || 'Main Project'})));
                 if (savedBudgets) setProjectBudgets(JSON.parse(savedBudgets)); // New state initialization
             }, []);
 
@@ -1253,7 +1320,12 @@
             const handleRenameProject = (oldName, newName) => { 
                 if(projects.includes(newName)) { window.alert("Project name already exists!"); return; } 
                 setProjects(projects.map(p => p === oldName ? newName : p)); 
-                setTransactions(transactions.map(t => t.projectName === oldName ? { ...t, projectName: newName } : t)); 
+                setTransactions(transactions.map(t => t.projectName === oldName ? { ...t, projectName: newName } : t));
+                setAttendance(prev => prev.map(x => x.projectName === oldName ? {...x, projectName:newName} : x));
+                setMaterials(prev => prev.map(x => x.projectName === oldName ? {...x, projectName:newName} : x));
+                setMusterRoll(prev => prev.map(x => x.projectName === oldName ? {...x, projectName:newName} : x));
+                setMilestones(prev => prev.map(x => x.projectName === oldName ? {...x, projectName:newName} : x));
+                setLiabilities(prev => prev.map(x => x.projectName === oldName ? {...x, projectName:newName} : x)); 
                 if(formData.projectName === oldName) setFormData({...formData, projectName: newName}); 
 
                 // Update budget key
@@ -1300,10 +1372,10 @@
                         </div>
 
                         {activeTab === 'dashboard' && <DashboardView totalIncome={totalIncome} totalExpense={totalExpense} balance={balance} transactions={transactions} setActiveTab={setActiveTab} handleEdit={handleEdit} handleDelete={handleDelete} projects={projects} projectBudgets={projectBudgets}/>}
-                        {activeTab === 'attendance' && <AttendanceView staff={staff} setStaff={setStaff} attendance={attendance} setAttendance={setAttendance} />}
-                        {activeTab === 'site' && <SiteManagementView materials={materials} setMaterials={setMaterials} musterRoll={musterRoll} setMusterRoll={setMusterRoll} workDone={workDone} setWorkDone={setWorkDone} toolsAtSite={toolsAtSite} setToolsAtSite={setToolsAtSite} milestones={milestones} setMilestones={setMilestones} />}
+                        {activeTab === 'attendance' && <AttendanceView staff={staff} setStaff={setStaff} attendance={attendance} setAttendance={setAttendance} projects={projects} />}
+                        {activeTab === 'site' && <SiteManagementView materials={materials} setMaterials={setMaterials} musterRoll={musterRoll} setMusterRoll={setMusterRoll} workDone={workDone} setWorkDone={setWorkDone} toolsAtSite={toolsAtSite} setToolsAtSite={setToolsAtSite} milestones={milestones} setMilestones={setMilestones} projects={projects} />}
                         {activeTab === 'entry' && <EntryFormView formData={formData} setFormData={setFormData} formType={formType} setFormType={setFormType} editingId={editingId} cancelEdit={cancelEdit} handleSubmit={handleSubmit} handleInputChange={handleInputChange} projects={projects} openProjectManager={() => setIsProjectManagerOpen(true)} formResetKey={formResetKey} />}
-                        {activeTab === 'reports' && <ReportsView transactions={transactions} projects={projects} totalExpense={totalExpense} handleDelete={handleDelete} handleEdit={handleEdit} liabilities={liabilities} setLiabilities={setLiabilities} />}
+                        {activeTab === 'reports' && <ReportsView transactions={transactions} projects={projects} totalExpense={totalExpense} handleDelete={handleDelete} handleEdit={handleEdit} liabilities={liabilities} setLiabilities={setLiabilities} attendance={attendance} materials={materials} musterRoll={musterRoll} milestones={milestones} workDone={workDone} toolsAtSite={toolsAtSite} />}
                     </main>
 
                     {/* மொபைல் வழிசெலுத்தல் பட்டி (Mobile Navigation Bar) */}
@@ -1348,4 +1420,3 @@
     </script>
 </body>
 </html>
-
